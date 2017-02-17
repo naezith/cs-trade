@@ -1,0 +1,52 @@
+{
+  "name": "react-todo-list",
+  "version": "1.0.0",
+  "description": "A simple todo list app built with React, Redux and Webpack",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "nodemon server/server.js --ignore components"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kweiberth/react-todo-list.git"
+  },
+  "author": "Kurt Weiberth",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "*",
+    "babel-core": "*",
+    "babel-loader": "*",
+    "babel-preset-es2015": "*",
+    "babel-preset-react": "*",
+    "babel-preset-react-hmre": "*",
+    "body-parser": "*",
+    "ejs": "*",
+    "express": "*",
+    "express-session": "*",
+    "express-mysql-session": "*",
+    "isomorphic-fetch": "*",
+    "json-loader": "*",
+    "lodash": "*",
+    "mysql": "*",
+    "passport": "*",
+    "passport-steam": "*",
+    "rc-slider": "*",
+    "react": "*",
+    "react-contextmenu": "^2.2.1",
+    "react-dom": "*",
+    "react-grid-layout": "*",
+    "react-redux": "*",
+    "react-router": "*",
+    "react-tooltip": "*",
+    "redux": "*",
+    "redux-logger": "*",
+    "redux-thunk": "*",
+    "steam-totp": "*",
+    "steam-tradeoffer-manager": "*",
+    "steam-user": "*",
+    "superagent": "*",
+    "webpack": "*",
+    "webpack-dev-middleware": "*",
+    "webpack-hot-middleware": "*"
+  }
+}
