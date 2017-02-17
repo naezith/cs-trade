@@ -9,6 +9,7 @@ import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
 import { Parallax } from 'react-parallax';
+import { Button, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
 var item_types = ['All', 'Key', 'Knife', 'Rifle', 'Sniper Rifle', 'Pistol', 'SMG', 'Shotgun', 'Machinegun', 'Collectible', 'Sticker', 'Music Kit', 'Tool'];
@@ -246,22 +247,22 @@ class App extends Component {
 		
 		if(utils.isEmpty(steam_user)) {
 			user_div = (
-				<div>
+				<Well>
 					<h2>Welcome! Please log in.</h2>
 					<SteamLogin actions={this.props.actions}/>
-				</div>
+				</Well>
 			)
 		}
 		else {
 			user_div = (
-				<div>
+				<Well>
 					<h2>Hello, {steam_user.displayName}. - <a href='logout'>Logout</a></h2>
 					<p><img src={steam_user.photos[2].value} alt='Your Avatar Image' /></p>
 					<p>Trade Offer URL (<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Help</a>): <br/>
 						<input type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
-						<button onClick={this.handleUpdateURL.bind(this)}>{this.state.editing_url ? 'Save' : 'Edit'}</button>
+						<Button onClick={this.handleUpdateURL.bind(this)}>{this.state.editing_url ? 'Save' : 'Edit'}</Button>
 					</p> 
-				</div>
+				</Well>
 			)
 		}
 		
@@ -304,58 +305,63 @@ class App extends Component {
 		// Render
 		var trade_r = this.state.trade_result;
 		return (
-		<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
-			<div style={{width: '850px', margin: '0 auto'}}>
+			<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
+			<Well style={{width: '1200px', margin: '0 auto'}}>
 				{user_div} 
-				<br/><hr/><br/><center>
-					<button onClick={this.handleTrade.bind(this)} disabled={!tradable} >TRADE</button>
+				<center>
+					<Button bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable}>TRADE</Button>
 					<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
 						trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
 					    trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
 						''}</p>
-				</center><br/><hr/><br/>
-				{
-				  ids.map((id) => {
-					  var is_bot = id === bot_id;
-					  var idx = is_bot ? 1 : 0;
-					  var st = this.state.user[id];
-					  var user_area = undefined;
-					  
-					  if(st) {
-						  user_area = (
-							  <div>
-								<h2>Stash</h2>
+				</center>
+				<Grid>
+					<Row className="show-grid">
+					{
+					  ids.map((id) => {
+						  var is_bot = id === bot_id;
+						  var whos = is_bot ? "Bot's" : "Your";
+						  var idx = is_bot ? 1 : 0;
+						  var st = this.state.user[id];
+						  var user_area = undefined;
+						  
+						  if(st){
+							  user_area = (
+								  <Well>
+									<h3>Filter</h3>
+									<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
+									<p>Type: <select value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+												{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}</select>
+									&nbsp;&nbsp;&nbsp;
+									   Exterior: <select value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+												{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}</select></p>
+									<p>StatTrak™: <input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
+									&nbsp;&nbsp;&nbsp;
+									   Name Tag: <input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/></p>
+										<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
+										<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
+									<p>Highest first: <input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/></p>
+									<p><Button onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
+								  </Well>
+							  );
+						  }
+						return ( 
+							<Col xs={6} md={6}> 
+							<Well className="center-block" key={id} style={{width: '450px'}}>
+								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
-								<h3>Filter Inventory</h3>
-								<button onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</button>
-								<p>Search: <input type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
-								<p>Type: <select value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}</select>
-								&nbsp;&nbsp;&nbsp;
-								   Exterior: <select value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}</select></p>
-								<p>StatTrak™: <input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
-								&nbsp;&nbsp;&nbsp;
-								   Name Tag: <input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/></p>
-									<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
-									<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-								<p>Highest first: <input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/></p>
-							  </div>
-						  );
-					  }
-					return ( 
-						<div key={id} style={{width: '400px', float: is_bot ? 'right' : 'left'}}>
-							<center><h1>{id == bot_id ? 'BOT' : 'YOU'}</h1></center>
-							{user_area}
-							<h2>Inventory</h2>
-							{inventory_div[idx]}
-						</div>
-					)
-				  })
-				}
-				
+								{user_area}
+								<h2>{whos} Inventory</h2>
+								{inventory_div[idx]}
+							</Well>
+							</Col>
+						)
+					  })
+					}
+					</Row>
+				</Grid>
 			  <ReactTooltip html={true} />
-			</div>
+			</Well>
 		</Parallax>
 		);
 	  }

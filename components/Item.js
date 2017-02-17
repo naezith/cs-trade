@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import utils from '../custom_utils'
+import { Button } from 'react-bootstrap';
 
 class Item extends Component {
 
@@ -23,7 +24,7 @@ class Item extends Component {
 		tip_html += "</center>"
 		
 		return (
-			<button onClick={() => this.props.click(item)} data-tip={tip_html} >
+			<Button onClick={() => this.props.click(item)} data-tip={tip_html} >
 				<ContextMenuTrigger id={this.props.id}>
 					<img width="70" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 					<br/>
@@ -36,7 +37,7 @@ class Item extends Component {
 						Inspect
 					</MenuItem>)}
 				</ContextMenu>
-			</button>
+			</Button>
 		);
 	}
 }

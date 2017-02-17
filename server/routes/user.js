@@ -132,7 +132,7 @@ router.post('/setTradeURL', function(req, res) {
   
 
 // BOT ON/OFF
-if(1) {
+if(0) {
 
 function validateOffer(user, bot, callback) {
     if(!user.items.length || user.items.length <= 0) return callback("User has no items in offer.");
