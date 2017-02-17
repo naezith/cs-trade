@@ -276,18 +276,19 @@ class App extends Component {
 			var id = ids[i];
 			var user = this.props.steam[id];
 			
-			if((i !== 0 && !this.state.user[id]) || 
-				(this.state.user[id] && this.state.user[id].loadingInventory)) inventory_div[i] = ( <p>Loading the inventory...</p> ); 
+			stash_div[i] = ( <p>0 items worth $0.00</p> ); 
+			if((i !== 0 && !this.state.user[id]) || (this.state.user[id] && this.state.user[id].loadingInventory && 
+			(!user || !user.inventory || !user.inventory.assets || user.inventory.assets.length <= 0))) {
+				inventory_div[i] = ( <p>Loading the inventory...</p> ); 
+			}
 			else if(utils.isEmpty(user)) {
 				inventory_div[i] = i == 0 ? ( <p>Please sign in via Steam.</p> ) : ( <p>Failed to fetch the bot's inventory.</p> ); 
 			}
 			else {
 				utils.backpackUpdated(user.stash);
 				
-				stash_div[i] = (<div>{!utils.isEmpty(user.stash) && <Backpack handleClick={this.handleClick.bind(this, 1, id)} user_id={id} inventory={user.stash}/>}</div>);
-				inventory_div[i] = (<div>{!utils.isEmpty(user.inventory) && <Backpack handleClick={this.handleClick.bind(this, 0, id)} 
-					user_id={id} inventory={this.filterItems(id, user.inventory)}
-				/>}</div>);
+				stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} user_id={id} inventory={user.stash}/>);
+				inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} user_id={id} inventory={this.filterItems(id, user.inventory)} />);
 			}
 		}
 		
