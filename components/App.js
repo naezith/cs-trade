@@ -9,7 +9,7 @@ import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
 import { Parallax } from 'react-parallax';
-import { Button, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
+import { Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
 var item_types = ['All', 'Key', 'Knife', 'Rifle', 'Sniper Rifle', 'Pistol', 'SMG', 'Shotgun', 'Machinegun', 'Collectible', 'Sticker', 'Music Kit', 'Tool'];
@@ -316,7 +316,7 @@ class App extends Component {
 						''}</p>
 				</center>
 				<Grid>
-					<Row className="show-grid">
+					<Row>
 					{
 					  ids.map((id) => {
 						  var is_bot = id === bot_id;
@@ -330,24 +330,43 @@ class App extends Component {
 								  <Well>
 									<h3>Filter</h3>
 									<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
-									<p>Type: <select value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-												{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}</select>
-									&nbsp;&nbsp;&nbsp;
-									   Exterior: <select value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-												{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}</select></p>
-									<p>StatTrak™: <input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
-									&nbsp;&nbsp;&nbsp;
-									   Name Tag: <input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/></p>
+									<Form inline>
+										Type:&nbsp;
+										<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+											{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+										</FormControl>
+										{' '}
+										Exterior:&nbsp;
+										<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+											{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+										</FormControl> 
+									</Form>
+									
+									<Form inline>
+										StatTrak™:&nbsp;
+										<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
+										
+										&nbsp;&nbsp;&nbsp;
+										
+										Name Tag: 
+										<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
+										
+										&nbsp;&nbsp;&nbsp;
+										
+										Highest first:&nbsp;
+										<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
+									</Form>
+									
+									<p><Button onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
 										<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
 										<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-									<p>Highest first: <input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/></p>
-									<p><Button onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
+									
 								  </Well>
 							  );
 						  }
 						return ( 
-							<Col xs={6} md={6}> 
-							<Well className="center-block" key={id} style={{width: '450px'}}>
+							<Col key={id} xs={6} md={6}> 
+							<Well className="center-block" style={{width: '450px'}}>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
 								{user_area}
