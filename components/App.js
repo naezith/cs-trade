@@ -259,7 +259,9 @@ class App extends Component {
 					<h2>Hello, {steam_user.displayName}. - <a href='logout'>Logout</a></h2>
 					<p><img src={steam_user.photos[2].value} alt='Your Avatar Image' /></p>
 					<Form inline>
+						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Trade URL:</a>&nbsp; 
 						<FormControl type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
+						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
 							{this.state.editing_url ? 'Save' : 'Edit'}
 						</Button>
 					</Form>
