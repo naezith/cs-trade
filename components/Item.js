@@ -22,19 +22,12 @@ class Item extends Component {
 		if(item.fraudwarnings && item.fraudwarnings.length > 0) {
 			tip_html += "<p>" + item.fraudwarnings[0] + "</p>";
 		}
-		var desc_imgs = '';
-		if(item.descriptions) {
-			item.descriptions.map((desc) => {
-				if(desc.type === "html" && desc.value.indexOf('sticker_info') !== -1){
-					var imgs = utils.getHTMLtags(desc.value, 'img');
-					for(var i in imgs) desc_imgs += imgs[i];
-					tip_html += desc_imgs;
-					desc_imgs = utils.replaceAll(desc_imgs, "img width=64 height=48", "img width=20 height=15");
-				}
-			});
-		}
 		
-		var sticker_div = (<div className="content" style={{position:'absolute'}} dangerouslySetInnerHTML={{__html: desc_imgs}}></div>);
+		var sticker_div = undefined;
+		if(item.stickers_html) {
+			tip_html += item.stickers_html;
+			sticker_div = (<div className="content" style={{position:'absolute'}} dangerouslySetInnerHTML={{__html: item.stickers_small_html}}></div>);
+		}
 		
 		return (
 			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px'}}>

@@ -68,6 +68,22 @@ class App extends Component {
 					if(assets[i].price_info.lowest_price <= 0) assets[i].price_info.valid = false;
 					
 					if(price > max) max = price;
+					
+					// Find stickers
+					var item = assets[i];
+					var desc_imgs = '';
+					if(item.descriptions) {
+						item.descriptions.map((desc) => {
+							if(desc.type === "html" && desc.value.indexOf('sticker_info') !== -1){
+								var imgs = utils.getHTMLtags(desc.value, 'img');
+								for(var i in imgs) desc_imgs += imgs[i];
+							}
+						});
+						if(desc_imgs !== ''){
+							item.stickers_html = desc_imgs;
+							item.stickers_small_html = utils.replaceAll(desc_imgs, "img width=64 height=48", "img width=20 height=15");
+						}
+					}
 				}
 				max = Math.ceil(max);
 				
