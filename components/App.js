@@ -241,13 +241,15 @@ class App extends Component {
 	}
 	
 	render() {
+		var well_bg_color = 'rgba(255, 255, 255, .65)';
+		
 		// User div
 		let user_div;
 		let steam_user = this.props.steam[this.props.user_id];
 		
 		if(utils.isEmpty(steam_user)) {
 			user_div = (
-				<Well>
+				<Well style={{background: well_bg_color}}>
 					<h2>Welcome! Please log in.</h2>
 					<SteamLogin actions={this.props.actions}/>
 				</Well>
@@ -255,7 +257,7 @@ class App extends Component {
 		}
 		else {
 			user_div = (
-				<Well>
+				<Well style={{background: well_bg_color}}>
 					<h2>Hello, {steam_user.displayName}. - <a href='logout'>Logout</a></h2>
 					<p><img src={steam_user.photos[2].value} alt='Your Avatar Image' /></p>
 					<Form inline>
@@ -310,10 +312,10 @@ class App extends Component {
 		var trade_r = this.state.trade_result;
 		return (
 			<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
-			<Well style={{width: '1200px', margin: '0 auto'}}>
+			<Well style={{maxWidth: '1010px', margin: '0 auto', background: well_bg_color}}>
 				{user_div} 
 				<center>
-					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable}>TRADE</Button>
+					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
 					<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
 						trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
 					    trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
@@ -331,7 +333,7 @@ class App extends Component {
 						  
 						  if(st){
 							  filter_div = (
-								  <Well>
+								  <Well style={{background: well_bg_color}}>
 									<h3>Filter</h3>
 									<Form className="center-block" inline>
 										StatTrak™:&nbsp;
@@ -374,10 +376,12 @@ class App extends Component {
 							  );
 						  }
 						return ( 
-							<Col key={id} xs={6} md={6}> 
-							<Well className="center-block" style={{width: '450px'}}>
-								<p><Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
-											onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
+							<Col key={id} md={5}> 
+							<Well className="center-block" style={{width: '450px', background: well_bg_color}}>
+								<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
+											onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
+											{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
+								</Button>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
 								{filter_div}
