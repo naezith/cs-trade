@@ -151,7 +151,7 @@ function validateOffer(user, bot, callback) {
 				for(var k in inventory.assets) {
 					var item = inventory.assets[k];
 					if(item.assetid === assetid) {
-						acc.value += parseFloat(parseFloat(item.price_info.lowest_price * common.getPriceRate(item.market_hash_name, item.type, acc.alias)).toFixed(2));
+						acc.value += parseFloat(parseFloat(item.price_info.lowest_price * common.getPriceRate(user.displayName, item.market_hash_name, item.type, acc.alias)).toFixed(2));
 						count += 1;
 						break;
 					}
@@ -251,8 +251,8 @@ router.post('/sendOffer', function(req, res) {
 	
 	if(!req.user.id) { return res.json( { status: 1, msg: "Bad auth." } ); }
 	
-	validateOffer({id: req.user.id, items: theirItems},
-				  {id: common.bot_id, items: myItems}, (err, success) => {
+	validateOffer({id: req.user.id, items: theirItems, displayName: req.user.displayName },
+				  {id: common.bot_id, items: myItems, displayName: 'bot' }, (err, success) => {
 		if(!err && success) {
 			getTradeURL(req.user.id).then(function (obj) {
 				var trade_url = obj.trade_url;
@@ -266,7 +266,7 @@ router.post('/sendOffer', function(req, res) {
 				offer.addMyItems(makeInventory(myItems));
 				offer.addTheirItems(makeInventory(theirItems));
 				
-				offer.setMessage("\'Fair trade, sir!\' - Bot");
+				offer.setMessage("Fair trade, sir! - Bot");
 				
 				offer.send(function(err, status) {
 					if (err) {

@@ -62,7 +62,7 @@ class App extends Component {
 					var price = assets[i].price_info.lowest_price;
 					
 					// Set rate
-					assets[i].price_info.lowest_price = parseFloat(price * common.getPriceRate(assets[i].market_hash_name, assets[i].type, rate_type)).toFixed(2);
+					assets[i].price_info.lowest_price = parseFloat(price * common.getPriceRate(this.props.steam[user_id].displayName, assets[i].market_hash_name, assets[i].type, rate_type)).toFixed(2);
 					if(assets[i].price_info.lowest_price <= 0) assets[i].price_info.valid = false;
 					
 					if(price > max) max = price;

@@ -1,4 +1,5 @@
-var bot_id = '76561198108613401'; //'76561198304258842';
+﻿var bot_id = '76561198108613401'; //'76561198304258842';
+var site_tag = 'CS TRADE';
 
 var rates = {
 	user: {
@@ -25,8 +26,9 @@ function getItemType(market_hash_name, type) {
     return 'weapon';
 }
 
-function getPriceRate(market_hash_name, type, rate_type) { 
-	return rates[rate_type][getItemType(market_hash_name, type)] || 0; 
+function getPriceRate(username, market_hash_name, type, rate_type) { 
+	return (rates[rate_type][getItemType(market_hash_name, type)] || 0)
+	+ (rate_type == 'user' && username.indexOf(site_tag) !== -1 ? 0.02 : 0.0); 
 }
 
-module.exports = {bot_id, rates, getPriceRate};
+module.exports = {bot_id, rates, getPriceRate, site_tag};
