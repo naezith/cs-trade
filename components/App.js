@@ -8,8 +8,7 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
-import { Parallax } from 'react-parallax';
-import { Navbar, Nav, NavItem, NavDropdown, MenuItem,
+import { Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
@@ -243,35 +242,10 @@ class App extends Component {
 	
 	render() {
 		var well_bg_color = 'rgba(255, 255, 255, .65)';
+		var well_bg_color_thick = 'rgba(255, 255, 255, .85)';
 		
 		// User div
-		let user_div;
 		let steam_user = this.props.steam[this.props.user_id];
-		
-		if(utils.isEmpty(steam_user)) {
-			user_div = (
-				<Well style={{background: well_bg_color}}>
-					<h2>Welcome! Please log in.</h2>
-					<SteamLogin actions={this.props.actions}/>
-				</Well>
-			)
-		}
-		else {
-			user_div = (
-				<Well style={{background: well_bg_color}}>
-					<h2>Hello, {steam_user.displayName}. - <a href='logout'>Logout</a></h2>
-					<p><img src={steam_user.photos[2].value} alt='Your Avatar Image' /></p>
-					<Form inline>
-						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Trade URL:</a>&nbsp; 
-						<FormControl type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
-						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
-							{this.state.editing_url ? 'Save' : 'Edit'}
-						</Button>
-					</Form>
-				</Well>
-			)
-		}
-		
 		
 		// Backpacks
 		var stash_div = [undefined, undefined];
@@ -310,123 +284,166 @@ class App extends Component {
 		}
 		
 		// Navbar
+		let navbar_user = undefined;
+		if(steam_user) {
+			navbar_user = (
+				<div style={{padding:'10px 0 0 0'}} >
+					<Form inline>
+						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Trade URL:</a>&nbsp; 
+						<FormControl type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
+						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
+							{this.state.editing_url ? 'Save' : 'Edit'}
+						</Button>
+				  <Navbar.Text pullRight>
+						<NavItem eventKey={1} href="logout">Logout</NavItem>
+				  </Navbar.Text>
+				  <Navbar.Text pullRight>
+						{steam_user.displayName}
+						&nbsp;&nbsp;<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
+				  </Navbar.Text>
+					</Form>
+				</div>
+			);
+		}
+		else {
+			navbar_user = (
+				<div>
+					<SteamLogin actions={this.props.actions}/>
+				</div>
+			);
+		}
 		const navbarInstance = (
-		  <Navbar inverse collapseOnSelect>
+		  <Navbar style={{background: well_bg_color_thick}} collapseOnSelect>
 			<Navbar.Header>
 			  <Navbar.Brand>
 				<a href="#">CS Trade</a>
 			  </Navbar.Brand>
 			  <Navbar.Toggle />
 			</Navbar.Header>
+			
 			<Navbar.Collapse>
-			  <Nav>
-				<NavItem eventKey={1} href="#">Link</NavItem>
-				<NavItem eventKey={2} href="#">Link</NavItem>
-				<NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
-				  <MenuItem eventKey={3.1}>Action</MenuItem>
-				  <MenuItem eventKey={3.2}>Another action</MenuItem>
-				  <MenuItem eventKey={3.3}>Something else here</MenuItem>
-				  <MenuItem divider />
-				  <MenuItem eventKey={3.3}>Separated link</MenuItem>
-				</NavDropdown>
-			  </Nav>
-			  <Nav pullRight>
-				<NavItem eventKey={1} href="#">Link Right</NavItem>
-				<NavItem eventKey={2} href="#">Link Right</NavItem>
-			  </Nav>
+				{navbar_user}
 			</Navbar.Collapse>
+		  </Navbar>
+		);
+		
+		const footer_div = (
+		  <Navbar style={{background: well_bg_color_thick, margin:'0',  width:'100%', height:'50px', bottom:'0'}} collapseOnSelect>
+			<p>Add "CS TRADE" to your nickname for 2% bonus! Rates: </p>
 		  </Navbar>
 		);
 
 		// Render
 		var trade_r = this.state.trade_result;
-		return (
-			<Parallax blur={10} bgImage="http://i65.tinypic.com/j6k6rt.jpg" strength={400}>
-				{navbarInstance}
-			<div style={{margin: '50px', overflow: 'auto'}}>
-				{user_div} 
-				<center>
-					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
-					<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
-						trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
-					    trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
-						''}</p>
-				</center>
-				{
-				  ids.map((id) => {
-					  var is_bot = id === bot_id;
-					  var whos = is_bot ? "Bot's" : "Your";
-					  var idx = is_bot ? 1 : 0;
-					  var st = this.state.user[id];
-					  var filter_div = undefined;
-					  
-					  if(st){
-						  filter_div = (
-							  <Well style={{background: well_bg_color}}>
-								<h3>Filter</h3>
-								<Form className="center-block" inline>
-									StatTrak™:&nbsp;
-									<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
-									
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									
-									Name Tag:&nbsp;
-									<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
-									
-									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-									
-									Highest first:&nbsp;
-									<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
-								</Form>
-								
-								<p/>
-								
-								<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
-								
-								<Form inline>
-									Type:&nbsp;
-									<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-										{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
-									</FormControl>
-									
-									&nbsp;
-									
-									Exterior:&nbsp;
-									<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-										{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
-									</FormControl>
-								</Form>
-								
-								<p/>
-								
-								<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
-								<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-							  </Well>
-						  );
-					  }
-					return ( 
-						<Well key={id} className="center-block" style={{background: well_bg_color, padding:20, width: '49%', float:(is_bot ? 'right' : 'left')}}>
-							<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
-										onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
-										{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
-							</Button>
-							<Well style={{background: well_bg_color}}>
-								<h2>{whos} Stash</h2>
-								{stash_div[idx]}
-							</Well>
-							{filter_div}
+		
+		var filter_div = [undefined, undefined];
+		var offer_div = [undefined, undefined];
+		
+		var mid_width = 300;
+		ids.map((id) => {
+			var is_bot = id === bot_id;
+			var whos = is_bot ? "Bot's" : "Your";
+			var idx = is_bot ? 1 : 0;
+			var st = this.state.user[id];
 
-							<Well style={{background: well_bg_color}}>
-								<h2>{whos} Inventory</h2>
-								{inventory_div[idx]}
-							</Well>
+			if(st){
+				filter_div[idx] = (
+					<Well style={{background: well_bg_color, padding:'0px 10px 10px 10px'}}>
+						<h3>{whos} Filter</h3>
+						<Form inline>
+							StatTrak™:&nbsp;
+							<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
+							
+							&nbsp;
+							
+							Name Tag:&nbsp;
+							<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
+						</Form>
+
+						<p/>
+
+						<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
+
+						<Form inline>
+							Type:&nbsp;
+							<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+								{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+							</FormControl>
+						</Form>
+						
+						<p/>
+							
+						<Form inline>
+							Exterior:&nbsp;
+							<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+								{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+							</FormControl>
+						</Form>
+
+						<p/>
+
+						<Form inline>
+							Highest first:&nbsp;
+							<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
+							
+							<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
+						</Form>
+						<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
+							
+					</Well>
+				);
+					  
+				offer_div[idx] = (
+					<Well key={id} className="center-block" style={{width:'100%', maxWidth:('calc((100% - '+ (mid_width+20) +'px)/2'), 
+								background: well_bg_color, padding:'10px 10px 0px 10px', float:(is_bot ? 'right' : 'left'),
+								marginLeft:(is_bot ? '10px' : '0px'), marginRight:(!is_bot ? '10px' : '0px')}}>
+						<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
+									onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
+									{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
+						</Button>
+						
+						<Well style={{marginTop:10, padding:'0px 10px 0px 10px', background: well_bg_color}}>
+							<h2>{whos} Stash</h2>
+							{stash_div[idx]}
 						</Well>
-					)
-				  })
-				}
-			  <ReactTooltip html={true} />
+
+						<Well style={{background: well_bg_color, padding:'0px 10px 0px 10px'}}>
+							<h2>{whos} Inventory</h2>
+							{inventory_div[idx]}
+						</Well>
+					</Well>
+				);
+			}
+		});
+				
+				
+				
+				
+		const mid_div = (
+			<Well style={{width:mid_width, background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'auto'}}>
+				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
+				<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
+					trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
+					trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
+					''}</p>
+				{filter_div[1]}
+				{filter_div[0]}
+			</Well>
+		);
+				
+		return (
+			<div style={{position:'relative', width:'100%', height:'100%'}}>
+				{navbarInstance}
+				
+				<div style={{margin: '5px 20px', overflow: 'auto', minHeight:('calc(100% + '+ (50) +'px')}}>
+					{offer_div[0]}
+					{offer_div[1]}
+					{mid_div}
+				</div>
+				
+				{footer_div}
+				<ReactTooltip html={true} />
 			</div>
-		</Parallax>
 		);
 	  }
 

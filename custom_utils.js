@@ -41,4 +41,13 @@ function getItemWear(market_hash_name) {
     return '';
 }
 
-module.exports = {isEmpty, getKeyOfItem, addItemToBackpack, removeItemFromBackpack, backpackUpdated, getItemWear};
+function getHTMLtags(html, tagName) {
+    var matches = html.match(new RegExp("<"+tagName+"[^>]*>", "ig"));
+    return matches;
+}
+
+function replaceAll(str, search, replacement) {
+    return str.replace(new RegExp(search, 'g'), replacement);
+};
+
+module.exports = {isEmpty, getKeyOfItem, addItemToBackpack, removeItemFromBackpack, backpackUpdated, getItemWear, getHTMLtags, replaceAll};

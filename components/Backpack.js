@@ -50,7 +50,7 @@ class Backpack extends Component {
 		
 		return (
 			<div>
-				{inventory.assets.length || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
+				{(inventory.assets ? inventory.assets.length : 0) || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
 				<div style={{height:200, overflowY:'auto'}}>
 					{inventory_div}
 				</div>
