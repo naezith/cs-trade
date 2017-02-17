@@ -30,18 +30,15 @@ class Backpack extends Component {
 				}
 				
 				inventory_div = (
-					<div>
-						{inventory.assets.length} items worth ${parseFloat(inventory.worth).toFixed(2)}
-						  <ReactGridLayout className="layout" layout={layout} 
-								cols={cols} rowHeight={rowHeight} width={cols*rowHeight}>
-								{
-								  inventory.assets.map((item) => {
-								    var id = utils.getKeyOfItem(item);
-									return <Item key={id} id={id} user_id={this.props.user_id} item={item} click={this.props.handleClick} />
-								  })
-								}
-						  </ReactGridLayout>
-					</div>
+				  <ReactGridLayout className="layout" layout={layout}
+						cols={cols} rowHeight={rowHeight} width={cols*rowHeight}>
+						{
+						  inventory.assets.map((item) => {
+							var id = utils.getKeyOfItem(item);
+							return <Item key={id} id={id} user_id={this.props.user_id} item={item} click={this.props.handleClick} />
+						  })
+						}
+				  </ReactGridLayout>
 				)
 			}
 			else {
@@ -51,7 +48,14 @@ class Backpack extends Component {
 			inventory_div = ( <h2>Could not fetch the inventory, maybe your profile is private.</h2> )
 		}
 		
-		return inventory_div;	
+		return (
+			<div>
+				{inventory.assets.length || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
+				<div style={{height:200, overflowY:'auto'}}>
+					{inventory_div}
+				</div>
+			</div>
+		);	
 	}
 }
 

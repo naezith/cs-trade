@@ -9,7 +9,8 @@ import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
 import { Parallax } from 'react-parallax';
-import { Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, NavDropdown, MenuItem,
+	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
 var item_types = ['All', 'Key', 'Knife', 'Rifle', 'Sniper Rifle', 'Pistol', 'SMG', 'Shotgun', 'Machinegun', 'Collectible', 'Sticker', 'Music Kit', 'Tool'];
@@ -308,11 +309,41 @@ class App extends Component {
 			tradable = true;
 		}
 		
+		// Navbar
+		const navbarInstance = (
+		  <Navbar inverse collapseOnSelect>
+			<Navbar.Header>
+			  <Navbar.Brand>
+				<a href="#">CS Trade</a>
+			  </Navbar.Brand>
+			  <Navbar.Toggle />
+			</Navbar.Header>
+			<Navbar.Collapse>
+			  <Nav>
+				<NavItem eventKey={1} href="#">Link</NavItem>
+				<NavItem eventKey={2} href="#">Link</NavItem>
+				<NavDropdown eventKey={3} title="Dropdown" id="basic-nav-dropdown">
+				  <MenuItem eventKey={3.1}>Action</MenuItem>
+				  <MenuItem eventKey={3.2}>Another action</MenuItem>
+				  <MenuItem eventKey={3.3}>Something else here</MenuItem>
+				  <MenuItem divider />
+				  <MenuItem eventKey={3.3}>Separated link</MenuItem>
+				</NavDropdown>
+			  </Nav>
+			  <Nav pullRight>
+				<NavItem eventKey={1} href="#">Link Right</NavItem>
+				<NavItem eventKey={2} href="#">Link Right</NavItem>
+			  </Nav>
+			</Navbar.Collapse>
+		  </Navbar>
+		);
+
 		// Render
 		var trade_r = this.state.trade_result;
 		return (
-			<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
-			<Well style={{maxWidth: '1010px', margin: '10px auto', background: well_bg_color}}>
+			<Parallax blur={10} bgImage="http://i65.tinypic.com/j6k6rt.jpg" strength={400}>
+				{navbarInstance}
+			<div style={{margin: '50px', overflow: 'auto'}}>
 				{user_div} 
 				<center>
 					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
@@ -321,81 +352,80 @@ class App extends Component {
 					    trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
 						''}</p>
 				</center>
-				<Grid>
-					<Row>
-					{
-					  ids.map((id) => {
-						  var is_bot = id === bot_id;
-						  var whos = is_bot ? "Bot's" : "Your";
-						  var idx = is_bot ? 1 : 0;
-						  var st = this.state.user[id];
-						  var filter_div = undefined;
-						  
-						  if(st){
-							  filter_div = (
-								  <Well style={{background: well_bg_color}}>
-									<h3>Filter</h3>
-									<Form className="center-block" inline>
-										StatTrak™:&nbsp;
-										<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
-										
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										
-										Name Tag:&nbsp;
-										<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
-										
-										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-										
-										Highest first:&nbsp;
-										<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
-									</Form>
+				{
+				  ids.map((id) => {
+					  var is_bot = id === bot_id;
+					  var whos = is_bot ? "Bot's" : "Your";
+					  var idx = is_bot ? 1 : 0;
+					  var st = this.state.user[id];
+					  var filter_div = undefined;
+					  
+					  if(st){
+						  filter_div = (
+							  <Well style={{background: well_bg_color}}>
+								<h3>Filter</h3>
+								<Form className="center-block" inline>
+									StatTrak™:&nbsp;
+									<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
 									
-									<p/>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									
-									<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
+									Name Tag:&nbsp;
+									<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
 									
-									<Form inline>
-										Type:&nbsp;
-										<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
-										</FormControl>
-										
-										&nbsp;
-										
-										Exterior:&nbsp;
-										<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
-										</FormControl>
-									</Form>
+									&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 									
-									<p/>
+									Highest first:&nbsp;
+									<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
+								</Form>
+								
+								<p/>
+								
+								<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
+								
+								<Form inline>
+									Type:&nbsp;
+									<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+										{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+									</FormControl>
 									
-									<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
-									<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-								  </Well>
-							  );
-						  }
-						return ( 
-							<Col key={id} md={5}> 
-							<Well className="center-block" style={{width: '450px', background: well_bg_color}}>
-								<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
-											onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
-											{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
-								</Button>
+									&nbsp;
+									
+									Exterior:&nbsp;
+									<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+										{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+									</FormControl>
+								</Form>
+								
+								<p/>
+								
+								<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
+								<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
+							  </Well>
+						  );
+					  }
+					return ( 
+						<Well key={id} className="center-block" style={{background: well_bg_color, padding:20, width: '49%', float:(is_bot ? 'right' : 'left')}}>
+							<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
+										onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
+										{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
+							</Button>
+							<Well style={{background: well_bg_color}}>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
-								{filter_div}
+							</Well>
+							{filter_div}
+
+							<Well style={{background: well_bg_color}}>
 								<h2>{whos} Inventory</h2>
 								{inventory_div[idx]}
 							</Well>
-							</Col>
-						)
-					  })
-					}
-					</Row>
-				</Grid>
+						</Well>
+					)
+				  })
+				}
 			  <ReactTooltip html={true} />
-			</Well>
+			</div>
 		</Parallax>
 		);
 	  }
