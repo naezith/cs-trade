@@ -8,7 +8,8 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
-		
+import { Parallax } from 'react-parallax';
+
 var _ = require('lodash');
 var item_types = ['All', 'Key', 'Knife', 'Rifle', 'Sniper Rifle', 'Pistol', 'SMG', 'Shotgun', 'Machinegun', 'Collectible', 'Sticker', 'Music Kit', 'Tool'];
 var item_exteriors = ['All', 'Factory New', 'Minimal Wear', 'Field-Tested', 'Well-Worn', 'Battle-Scarred'];
@@ -91,6 +92,7 @@ class App extends Component {
 	}
 	
 	componentWillMount() {
+		document.body.style.backgroundColor = "black";
 		this.resetFilters[bot_id];
 		if(!utils.isEmpty(this.props.steam[this.props.user_id])) this.resetFilters[this.props.user_id];
 	}
@@ -302,6 +304,7 @@ class App extends Component {
 		// Render
 		var trade_r = this.state.trade_result;
 		return (
+		<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
 			<div style={{width: '850px', margin: '0 auto'}}>
 				{user_div} 
 				<br/><hr/><br/><center>
@@ -353,6 +356,7 @@ class App extends Component {
 				
 			  <ReactTooltip html={true} />
 			</div>
+		</Parallax>
 		);
 	  }
 
