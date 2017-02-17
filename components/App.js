@@ -312,7 +312,7 @@ class App extends Component {
 		var trade_r = this.state.trade_result;
 		return (
 			<Parallax bgImage="https://www.dropbox.com/s/7utay0v6kmwwlos/bg.jpg?raw=1" strength={400}>
-			<Well style={{maxWidth: '1010px', margin: '0 auto', background: well_bg_color}}>
+			<Well style={{maxWidth: '1010px', margin: '10px auto', background: well_bg_color}}>
 				{user_div} 
 				<center>
 					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
