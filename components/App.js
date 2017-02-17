@@ -258,10 +258,11 @@ class App extends Component {
 				<Well>
 					<h2>Hello, {steam_user.displayName}. - <a href='logout'>Logout</a></h2>
 					<p><img src={steam_user.photos[2].value} alt='Your Avatar Image' /></p>
-					<p>Trade Offer URL (<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Help</a>): <br/>
-						<input type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
-						<Button onClick={this.handleUpdateURL.bind(this)}>{this.state.editing_url ? 'Save' : 'Edit'}</Button>
-					</p> 
+					<Form inline>
+						<FormControl type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
+							{this.state.editing_url ? 'Save' : 'Edit'}
+						</Button>
+					</Form>
 				</Well>
 			)
 		}
@@ -310,7 +311,7 @@ class App extends Component {
 			<Well style={{width: '1200px', margin: '0 auto'}}>
 				{user_div} 
 				<center>
-					<Button bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable}>TRADE</Button>
+					<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable}>TRADE</Button>
 					<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
 						trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
 					    trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
@@ -373,7 +374,8 @@ class App extends Component {
 						return ( 
 							<Col key={id} xs={6} md={6}> 
 							<Well className="center-block" style={{width: '450px'}}>
-								<p><Button className="center-block" onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
+								<p><Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
+											onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
 								{user_area}
