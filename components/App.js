@@ -329,44 +329,50 @@ class App extends Component {
 							  user_area = (
 								  <Well>
 									<h3>Filter</h3>
-									<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
-									<Form inline>
-										Type:&nbsp;
-										<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
-										</FormControl>
-										{' '}
-										Exterior:&nbsp;
-										<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-											{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
-										</FormControl> 
-									</Form>
-									
-									<Form inline>
+									<Form className="center-block" inline>
 										StatTrak™:&nbsp;
 										<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
 										
-										&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										
-										Name Tag: 
+										Name Tag:&nbsp;
 										<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
 										
-										&nbsp;&nbsp;&nbsp;
+										&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 										
 										Highest first:&nbsp;
 										<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
 									</Form>
 									
-									<p><Button onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
-										<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
-										<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
+									<p/>
 									
+									<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
+									
+									<Form inline>
+										Type:&nbsp;
+										<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+											{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+										</FormControl>
+										
+										&nbsp;
+										
+										Exterior:&nbsp;
+										<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+											{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+										</FormControl>
+									</Form>
+									
+									<p/>
+									
+									<center>${st.price_range[0]} - ${st.price_range[1]}</center> 
+									<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
 								  </Well>
 							  );
 						  }
 						return ( 
 							<Col key={id} xs={6} md={6}> 
 							<Well className="center-block" style={{width: '450px'}}>
+								<p><Button className="center-block" onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
 								{user_area}
