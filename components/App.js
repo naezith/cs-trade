@@ -327,10 +327,10 @@ class App extends Component {
 						  var whos = is_bot ? "Bot's" : "Your";
 						  var idx = is_bot ? 1 : 0;
 						  var st = this.state.user[id];
-						  var user_area = undefined;
+						  var filter_div = undefined;
 						  
 						  if(st){
-							  user_area = (
+							  filter_div = (
 								  <Well>
 									<h3>Filter</h3>
 									<Form className="center-block" inline>
@@ -380,7 +380,7 @@ class App extends Component {
 											onClick={this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory}>Refresh</Button></p>
 								<h2>{whos} Stash</h2>
 								{stash_div[idx]}
-								{user_area}
+								{filter_div}
 								<h2>{whos} Inventory</h2>
 								{inventory_div[idx]}
 							</Well>
