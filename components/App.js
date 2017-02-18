@@ -339,10 +339,10 @@ class App extends Component {
 			);
 			navbar_user = (
 				<Nav pullRight>
-					<NavItem eventKey={4} disabled>
+					<Navbar.Text>
 						<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
 						&nbsp;&nbsp;{steam_user.displayName}
-					</NavItem>
+					</Navbar.Text>
 					<Navbar.Text pullRight>
 						<NavItem eventKey={5} href="logout">Logout</NavItem>
 					</Navbar.Text>
@@ -356,7 +356,7 @@ class App extends Component {
 		  <Navbar style={{background: well_bg_color_thick}} collapseOnSelect>
 			<Navbar.Header>
 			  <Navbar.Brand>
-				<a href="#">CS Trade</a>
+				CS Trade
 			  </Navbar.Brand>
 			  <Navbar.Toggle />
 			</Navbar.Header>
@@ -487,6 +487,17 @@ class App extends Component {
 			</Modal>
 		);
 		
+		var rates_div = (
+			<center>
+				<h4>Rates</h4>
+				<p><ControlLabel>Keys:</ControlLabel> {common.rates.user.key*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.key*100}% 
+					&nbsp;&nbsp;&nbsp;<ControlLabel>Knives:</ControlLabel> {common.rates.user.knife*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.knife*100}%
+					&nbsp;&nbsp;&nbsp;<ControlLabel>Rare weapons:</ControlLabel> {common.rates.user.rare_skin*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.rare_skin*100}%</p>
+				<p><ControlLabel>Weapons:</ControlLabel> {common.rates.user.weapon*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.weapon*100}%
+				&nbsp;&nbsp;&nbsp;<ControlLabel>Misc:</ControlLabel> {common.rates.user.misc*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.misc*100}%</p>
+			</center>
+		);
+		
 		let faq_modal = (
 			<Modal show={this.state.show_modal_faq} onHide={this.setModalState.bind(this, 'faq', false)}>
 			  <Modal.Header closeButton>
@@ -504,6 +515,8 @@ class App extends Component {
 				
 				<ControlLabel>IS THERE ANY RISK DURING TRADING?</ControlLabel>
 				<p>AS ALL THE BOTS SEND YOU, TRADE OFFERS THROUGH STEAM, YOU ARE ELIGIBLE TO CHECK ALL ITEMS TO BE TRADED ON YOUR OWN RIGHT BEFORE ACCEPTING THE OFFER. NO ONE WILL FORCE YOU TO TRADE ITEMS. IF YOU ARE NOT SATISFIED WITH THE PROPOSED OFFER, YOU CAN FREELY REJECT IT AND SELECT ANY OTHER ONE.</p>
+				<hr/>
+				{rates_div}
 			  </Modal.Body>
 			</Modal>
 		);
