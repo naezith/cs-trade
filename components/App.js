@@ -115,9 +115,15 @@ class App extends Component {
 		}
 	}
 	
-	componentDidUpdate() {
+	componentDidUpdate(prevProps, prevState) {
 		ReactTooltip.hide();
 		ReactTooltip.rebuild();
+		
+		if(this.state.show_modal_giveaway) {
+			var node = document.createElement('script');
+			node.src = 'https://js.gleam.io/e.js';
+			document.body.appendChild(node);  
+		}
 	}
 	
 	componentWillMount() {
@@ -152,6 +158,7 @@ class App extends Component {
 			this.handleRefresh(this.props.user_id);
 		}
 	}
+	
 	handleChange(event) {
 		this.setState( { trade_url: event.target.value} );
 	}
@@ -364,12 +371,6 @@ class App extends Component {
 			</Navbar.Collapse>
 		  </Navbar>
 		);
-		
-		const footer_div = undefined;/*(
-		  <Navbar style={{background: well_bg_color_thick, margin:'0',  width:'100%', height:'50px', bottom:'0'}} collapseOnSelect>
-			<p>Add "CS TRADE" to your nickname for 2% bonus! Rates: </p>
-		  </Navbar>
-		);*/
 
 		// Render
 		var trade_r = this.state.trade_result;
@@ -481,7 +482,7 @@ class App extends Component {
 				<Modal.Title>Giveaway</Modal.Title>
 			  </Modal.Header>
 			  <Modal.Body>
-				<a class="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">CS Trade Test Competition</a>
+				<a className="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">CS Trade Test Competition</a>
 			  </Modal.Body>
 			</Modal>
 		);
@@ -493,13 +494,16 @@ class App extends Component {
 			  </Modal.Header>
 			  <Modal.Body>
 				<ControlLabel>IS IT POSSIBLE TO LOWER THE WEBSITE COMMISSION?</ControlLabel>
-				<p> OF COURSE, YOU NEED TO ADD “CS TRADE” TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
+				<p>OF COURSE, YOU NEED TO ADD “CS TRADE” TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
+				
 				<ControlLabel>WHY I DON'T SEE SOME OF THE CS:GO ITEMS IN MY INVENTORY ON THE WEBSITE?</ControlLabel>
-				<p> YOU NEED TO REFRESH YOUR INVENTORY. IF THE PROBLEM IS NOT SOLVE – PLEASE WAIT A LITTLE. MOST LIKELY, YOU HAVE MADE A PURCHASE ON THE MARKET LESS THAN 7 DAYS AGO. ITEMS APPEAR ONLY AFTER SEVEN DAYS FROM THE PURCHASE.</p>
+				<p>YOU NEED TO REFRESH YOUR INVENTORY. IF THE PROBLEM IS NOT SOLVE – PLEASE WAIT A LITTLE. MOST LIKELY, YOU HAVE MADE A PURCHASE ON THE MARKET LESS THAN 7 DAYS AGO. ITEMS APPEAR ONLY AFTER SEVEN DAYS FROM THE PURCHASE.</p>
+				
 				<ControlLabel>WHY ARE SOME ITEMS UNAVAILABLE FOR TRADING?</ControlLabel>
-				<p> WE DO NOT TRADE THESE ITEMS, BECAUSE IF WE PROCESS SUCH TRADES OUR ACCOUNTS WOULD BE FULL OF CHEAP AND LOW-GRADE SKINS, AND WE WILL NO LONGER HAVE UNIQUE ITEMS.</p>
+				<p>WE DO NOT TRADE THESE ITEMS, BECAUSE IF WE PROCESS SUCH TRADES OUR ACCOUNTS WOULD BE FULL OF CHEAP AND LOW-GRADE SKINS, AND WE WILL NO LONGER HAVE UNIQUE ITEMS.</p>
+				
 				<ControlLabel>IS THERE ANY RISK DURING TRADING?</ControlLabel>
-				<p> AS ALL THE BOTS SEND YOU, TRADE OFFERS THROUGH STEAM, YOU ARE ELIGIBLE TO CHECK ALL ITEMS TO BE TRADED ON YOUR OWN RIGHT BEFORE ACCEPTING THE OFFER. NO ONE WILL FORCE YOU TO TRADE ITEMS. IF YOU ARE NOT SATISFIED WITH THE PROPOSED OFFER, YOU CAN FREELY REJECT IT AND SELECT ANY OTHER ONE.</p>
+				<p>AS ALL THE BOTS SEND YOU, TRADE OFFERS THROUGH STEAM, YOU ARE ELIGIBLE TO CHECK ALL ITEMS TO BE TRADED ON YOUR OWN RIGHT BEFORE ACCEPTING THE OFFER. NO ONE WILL FORCE YOU TO TRADE ITEMS. IF YOU ARE NOT SATISFIED WITH THE PROPOSED OFFER, YOU CAN FREELY REJECT IT AND SELECT ANY OTHER ONE.</p>
 			  </Modal.Body>
 			</Modal>
 		);
@@ -534,13 +538,11 @@ class App extends Component {
 		return (
 			<div style={{position:'relative', width:'100%', height:'100%'}}>
 				{navbarInstance} {trade_url_modal}{giveaway_modal}{faq_modal}
-				
 				<div style={{margin: '5px 20px', overflow: 'auto', minHeight:('calc(100% + '+ (50) +'px')}}>
 					{offer_div[0]}
 					{offer_div[1]}
 					{mid_div}
 				</div>
-				{footer_div}
 				<ReactTooltip html={true} />
 			</div>
 		);
