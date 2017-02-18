@@ -132,6 +132,7 @@ class App extends Component {
 		if(!utils.isEmpty(this.props.steam[this.props.user_id])) this.resetFilters[this.props.user_id];
 	}
 	componentDidMount() {
+		document.title = common.site_tag;
 		this.handleRefresh(bot_id);
 		
 		// Get player inventory
@@ -356,7 +357,7 @@ class App extends Component {
 		  <Navbar style={{background: well_bg_color_thick}} collapseOnSelect>
 			<Navbar.Header>
 			  <Navbar.Brand>
-				CS Trade
+			  {common.site_tag}
 			  </Navbar.Brand>
 			  <Navbar.Toggle />
 			</Navbar.Header>
@@ -482,7 +483,7 @@ class App extends Component {
 				<Modal.Title>Giveaway</Modal.Title>
 			  </Modal.Header>
 			  <Modal.Body>
-				<a className="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">CS Trade Test Competition</a>
+				<a className="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">{common.site_tag} Test Competition</a>
 			  </Modal.Body>
 			</Modal>
 		);
@@ -505,7 +506,7 @@ class App extends Component {
 			  </Modal.Header>
 			  <Modal.Body>
 				<ControlLabel>IS IT POSSIBLE TO LOWER THE WEBSITE COMMISSION?</ControlLabel>
-				<p>OF COURSE, YOU NEED TO ADD “CS TRADE” TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
+				<p>OF COURSE, YOU NEED TO ADD <ControlLabel>"{common.site_tag}"</ControlLabel> TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
 				
 				<ControlLabel>WHY I DON'T SEE SOME OF THE CS:GO ITEMS IN MY INVENTORY ON THE WEBSITE?</ControlLabel>
 				<p>YOU NEED TO REFRESH YOUR INVENTORY. IF THE PROBLEM IS NOT SOLVE – PLEASE WAIT A LITTLE. MOST LIKELY, YOU HAVE MADE A PURCHASE ON THE MARKET LESS THAN 7 DAYS AGO. ITEMS APPEAR ONLY AFTER SEVEN DAYS FROM THE PURCHASE.</p>
