@@ -348,11 +348,11 @@ class App extends Component {
 		  </Navbar>
 		);
 		
-		const footer_div = (
+		const footer_div = undefined;/*(
 		  <Navbar style={{background: well_bg_color_thick, margin:'0',  width:'100%', height:'50px', bottom:'0'}} collapseOnSelect>
 			<p>Add "CS TRADE" to your nickname for 2% bonus! Rates: </p>
 		  </Navbar>
-		);
+		);*/
 
 		// Render
 		var trade_r = this.state.trade_result;
