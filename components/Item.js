@@ -29,12 +29,14 @@ class Item extends Component {
 			sticker_div = (<div className="content" dangerouslySetInnerHTML={{__html: item.stickers_small_html}}></div>);
 		}
 		
+		var is_st = item.type.includes('StatTrak');
 		return (
 			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px', padding:'0'}}>
 				<div style={{background:'#EEEEEE', position:'absolute', marginLeft:'78px', padding:'0', float:'right'}}>
 					{sticker_div}
 				</div>
-				<Well style={{background:'#EEEEEE', position:'absolute', padding:'0', float:'right', marginTop:'65px'}}>
+				<Well style={{background:'#EEEEEE', position:'absolute', padding:'0', float:'right', marginTop:(45 + (is_st ? 0 : 20))}}>
+					{is_st && <font style={{fontSize:'0.75em'}} color="#998100">ST</font>}{is_st && <br/>}
 					<font style={{fontSize:'0.75em'}} color="#0000DF">{utils.getItemWear(item.market_hash_name)}</font>
 				</Well>
 				<ContextMenuTrigger id={this.props.id} >
