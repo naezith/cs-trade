@@ -83,6 +83,7 @@ class App extends Component {
 						if(desc_imgs !== ''){
 							item.stickers_html = desc_imgs;
 							item.stickers_small_html = utils.replaceAll(desc_imgs, "img width=64 height=48", "img width=20 height=15");
+							item.stickers_small_html = utils.replaceAll(item.stickers_small_html, `.png">`, `.png"><br/>`);
 						}
 					}
 				}

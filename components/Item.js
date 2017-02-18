@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { ContextMenu, MenuItem, ContextMenuTrigger } from "react-contextmenu";
 import utils from '../custom_utils'
-import { Button } from 'react-bootstrap';
+import { Button, Well } from 'react-bootstrap';
 
 class Item extends Component {
 
@@ -26,17 +26,21 @@ class Item extends Component {
 		var sticker_div = undefined;
 		if(item.stickers_html) {
 			tip_html += item.stickers_html;
-			sticker_div = (<div className="content" style={{position:'absolute'}} dangerouslySetInnerHTML={{__html: item.stickers_small_html}}></div>);
+			sticker_div = (<div className="content" dangerouslySetInnerHTML={{__html: item.stickers_small_html}}></div>);
 		}
 		
 		return (
-			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px'}}>
-				{sticker_div}
+			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px', padding:'0'}}>
+				<div style={{background:'#EEEEEE', position:'absolute', marginLeft:'78px', padding:'0', float:'right'}}>
+					{sticker_div}
+				</div>
+				<Well style={{background:'#EEEEEE', position:'absolute', padding:'0', float:'right', marginTop:'65px'}}>
+					<font style={{fontSize:'0.75em'}} color="#0000DF">{utils.getItemWear(item.market_hash_name)}</font>
+				</Well>
 				<ContextMenuTrigger id={this.props.id} >
-					<img width="70" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
+					<img width="75" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 					<br/>
 					{item.price_info.valid === true ? ((item.price_info.currency ? item.price_info.currency : '') + item.price_info.lowest_price) : 'No Price'}
-					<font style={{float:'right'}} color="#0000CD">{utils.getItemWear(item.market_hash_name)}</font>
 				</ContextMenuTrigger>
 				<ContextMenu id={this.props.id}>
 					{item.actions && item.actions.length > 0 && item.actions[0].name.toUpperCase().includes('INSPECT') &&

@@ -13,6 +13,8 @@ https://steamcommunity-a.akamaihd.net/economy/image/
 Get user CS:GO Inventory
 http://steamcommunity.com/inventory/76561198013519231/730/2?l=english&count=5000
 
+float_value is here
+http://api.steampowered.com/IEconItems_730/GetPlayerItems/v0001/?key=81C24E382D9E973F7A50A175899EB8B1&SteamID=76561198013519231
 
 Bot: 			76561198108613401
 cs.money bot: 	76561198304258842
