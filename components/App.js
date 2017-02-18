@@ -8,7 +8,7 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
-import { Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
+import { Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
@@ -23,8 +23,18 @@ class App extends Component {
 			editing_url : false,
 			
 			user : {}, 
-			trade_result: { status: -2 }
+			trade_result: { status: -2 },
+			
+			show_modal_trade_url: false,
+			show_modal_giveaway: false,
+			show_modal_faq: false
 		};
+	}
+	setModalState(name, on) {
+		name = 'show_modal_' + name;
+		var obj = this.state;
+		obj[name] = on;
+		this.setState(obj);
 	}
 	
 	getNewUser() {
@@ -263,7 +273,7 @@ class App extends Component {
 	
 	render() {
 		var well_bg_color = 'rgba(255, 255, 255, .65)';
-		var well_bg_color_thick = 'rgba(255, 255, 255, .85)';
+		var well_bg_color_thick = 'rgba(255, 255, 255, .95)';
 		
 		// User div
 		let steam_user = this.props.steam[this.props.user_id];
@@ -308,30 +318,32 @@ class App extends Component {
 		let navbar_user = undefined;
 		if(steam_user) {
 			navbar_user = (
-				<div style={{padding:'10px 0 0 0'}} >
-					<Form inline>
-						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'>Trade URL:</a>&nbsp; 
-						<FormControl type="text" value={this.state.trade_url} size="70" onChange={this.handleChange.bind(this)} disabled={!this.state.editing_url}/>
-						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
-							{this.state.editing_url ? 'Save' : 'Edit'}
-						</Button>
+				<Nav>
+					<NavItem eventKey={1}>Trade URL</NavItem>
 				  <Navbar.Text pullRight>
-						<NavItem eventKey={1} href="logout">Logout</NavItem>
+						<NavItem eventKey={2} href="logout">Logout</NavItem>
 				  </Navbar.Text>
 				  <Navbar.Text pullRight>
 						{steam_user.displayName}
 						&nbsp;&nbsp;<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
 				  </Navbar.Text>
-					</Form>
-				</div>
+				  
+				</Nav>
+			);
+			navbar_user = (
+				<Nav pullRight>
+					<NavItem eventKey={4} disabled>
+						<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
+						&nbsp;&nbsp;{steam_user.displayName}
+					</NavItem>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={5} href="logout">Logout</NavItem>
+					</Navbar.Text>
+				</Nav>
 			);
 		}
 		else {
-			navbar_user = (
-				<div>
-					<SteamLogin actions={this.props.actions}/>
-				</div>
-			);
+			navbar_user = (<SteamLogin actions={this.props.actions}/>);
 		}
 		const navbarInstance = (
 		  <Navbar style={{background: well_bg_color_thick}} collapseOnSelect>
@@ -343,6 +355,11 @@ class App extends Component {
 			</Navbar.Header>
 			
 			<Navbar.Collapse>
+				<Nav>
+					<NavItem eventKey={1} onClick={this.setModalState.bind(this, 'trade_url', true)} >Trade URL</NavItem>
+					<NavItem eventKey={2} onClick={this.setModalState.bind(this, 'giveaway', true)} >Giveaway</NavItem>
+					<NavItem eventKey={3} onClick={this.setModalState.bind(this, 'faq', true)} >FAQ</NavItem>
+				</Nav>
 				{navbar_user}
 			</Navbar.Collapse>
 		  </Navbar>
@@ -457,16 +474,72 @@ class App extends Component {
 			</Well>
 		);
 				
+		let trade_url_modal = undefined;
+		let giveaway_modal = (
+			<Modal show={this.state.show_modal_giveaway} onHide={this.setModalState.bind(this, 'giveaway', false)}>
+			  <Modal.Header closeButton>
+				<Modal.Title>Giveaway</Modal.Title>
+			  </Modal.Header>
+			  <Modal.Body>
+				<a class="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">CS Trade Test Competition</a>
+			  </Modal.Body>
+			</Modal>
+		);
+		
+		let faq_modal = (
+			<Modal show={this.state.show_modal_faq} onHide={this.setModalState.bind(this, 'faq', false)}>
+			  <Modal.Header closeButton>
+				<Modal.Title>Frequently Asked Questions</Modal.Title>
+			  </Modal.Header>
+			  <Modal.Body>
+				<ControlLabel>IS IT POSSIBLE TO LOWER THE WEBSITE COMMISSION?</ControlLabel>
+				<p> OF COURSE, YOU NEED TO ADD “CS TRADE” TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
+				<ControlLabel>WHY I DON'T SEE SOME OF THE CS:GO ITEMS IN MY INVENTORY ON THE WEBSITE?</ControlLabel>
+				<p> YOU NEED TO REFRESH YOUR INVENTORY. IF THE PROBLEM IS NOT SOLVE – PLEASE WAIT A LITTLE. MOST LIKELY, YOU HAVE MADE A PURCHASE ON THE MARKET LESS THAN 7 DAYS AGO. ITEMS APPEAR ONLY AFTER SEVEN DAYS FROM THE PURCHASE.</p>
+				<ControlLabel>WHY ARE SOME ITEMS UNAVAILABLE FOR TRADING?</ControlLabel>
+				<p> WE DO NOT TRADE THESE ITEMS, BECAUSE IF WE PROCESS SUCH TRADES OUR ACCOUNTS WOULD BE FULL OF CHEAP AND LOW-GRADE SKINS, AND WE WILL NO LONGER HAVE UNIQUE ITEMS.</p>
+				<ControlLabel>IS THERE ANY RISK DURING TRADING?</ControlLabel>
+				<p> AS ALL THE BOTS SEND YOU, TRADE OFFERS THROUGH STEAM, YOU ARE ELIGIBLE TO CHECK ALL ITEMS TO BE TRADED ON YOUR OWN RIGHT BEFORE ACCEPTING THE OFFER. NO ONE WILL FORCE YOU TO TRADE ITEMS. IF YOU ARE NOT SATISFIED WITH THE PROPOSED OFFER, YOU CAN FREELY REJECT IT AND SELECT ANY OTHER ONE.</p>
+			  </Modal.Body>
+			</Modal>
+		);
+		if(steam_user) {
+			trade_url_modal = (
+				<Modal show={this.state.show_modal_trade_url} onHide={this.setModalState.bind(this, 'trade_url', false)}>
+				  <Modal.Header closeButton>
+					<Modal.Title>Trade URL</Modal.Title>
+				  </Modal.Header>
+				  <Modal.Body>
+					<center>
+						{!steam_user && <p>Please sign in with Steam.</p>}
+						<Form inline>
+							<FormControl type="text" value={this.state.trade_url} onChange={this.handleChange.bind(this)} disabled={steam_user || !this.state.editing_url}/>
+							<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
+								{this.state.editing_url ? 'Save' : 'Edit'}
+							</Button>
+						</Form>
+						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'><h2>FIND YOUR TRADE URL</h2></a>
+					</center>
+					<hr/>
+					<h4>What is it for?</h4>
+					<p>By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without 
+					the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you
+					have inspected and accepted the offer from your Steam page.</p>
+					
+				  </Modal.Body>
+				</Modal>
+			);
+		}
+		
 		return (
 			<div style={{position:'relative', width:'100%', height:'100%'}}>
-				{navbarInstance}
+				{navbarInstance} {trade_url_modal}{giveaway_modal}{faq_modal}
 				
 				<div style={{margin: '5px 20px', overflow: 'auto', minHeight:('calc(100% + '+ (50) +'px')}}>
 					{offer_div[0]}
 					{offer_div[1]}
 					{mid_div}
 				</div>
-				
 				{footer_div}
 				<ReactTooltip html={true} />
 			</div>
