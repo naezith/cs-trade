@@ -35,6 +35,7 @@ class App extends Component {
 			filter_exterior : item_exteriors[0],
 			filter_nametag : false,
 			filter_stattrak : false,
+			filter_sticker : false,
 			filter_sort_price : true,
 			price_range: [0, 2000],
 			max_price: 5000
@@ -202,6 +203,9 @@ class App extends Component {
 	filterStatTrak(st, it){ 
 		return !st.filter_stattrak || it.type.includes('StatTrak');
 	}
+	filterSticker(st, it){ 
+		return !st.filter_sticker || it.stickers_html;
+	}
 	filterNameTag(st, it){ 
 		return !st.filter_nametag || (it.fraudwarnings && it.fraudwarnings.length > 0);
 	}
@@ -233,7 +237,7 @@ class App extends Component {
 		// Filter
 		inventory.assets = inventory.assets.filter((it) => 
 			this.filterPrice(st, it) && this.filterName(st, it) && this.filterType(st, it) && 
-			this.filterStatTrak(st, it) && this.filterExterior(st, it) && this.filterNameTag(st, it)
+			this.filterStatTrak(st, it) && this.filterExterior(st, it) && this.filterNameTag(st, it) && this.filterSticker(st, it)
 		);
 		
 		utils.backpackUpdated(inventory, st.filter_sort_price ? -1 : 1);
@@ -374,6 +378,11 @@ class App extends Component {
 							
 							Name Tag:&nbsp;
 							<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
+							
+							&nbsp;
+							
+							Sticker:&nbsp;
+							<Checkbox type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)}/>
 						</Form>
 
 						<p/>
