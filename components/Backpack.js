@@ -17,7 +17,7 @@ class Backpack extends Component {
 		if(!utils.isEmpty(inventory)) {
 			if(inventory.success === 1){
 				inventory_div = (
-				  <div>
+				  <div style={{height:'100%', minHeight:'100%', overflow:'auto'}} >
 						{
 						  inventory.assets.map((item) => {
 							var id = utils.getKeyOfItem(item);
@@ -36,7 +36,8 @@ class Backpack extends Component {
 		
 		var whos = this.props.is_user ? "Your" : "Bot's";
 		return (
-			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" style={{background: utils.well_bg_color}}>
+			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" 
+				style={{height:(this.props.is_stash ? 230 : 540), background: utils.well_bg_color}}>
 				{(inventory.assets ? inventory.assets.length : 0) || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
 				{inventory_div}
 			</Panel>

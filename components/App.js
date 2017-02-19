@@ -537,9 +537,9 @@ class App extends Component {
 		}
 		
 		return (
-			<div style={{position:'relative', width:'100%', height:'100%'}}>
+			<div style={{width:'100%'}}>
 				{navbarInstance} {trade_url_modal}{giveaway_modal}{faq_modal}
-				<div style={{margin: '5px 20px', overflow: 'auto', minHeight:('calc(100% + '+ (50) +'px')}}>
+				<div style={{margin: '20px', overflow: 'hidden'}}>
 					{offer_div[0]}
 					{offer_div[1]}
 					{mid_div}
