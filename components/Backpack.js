@@ -37,7 +37,7 @@ class Backpack extends Component {
 		var whos = this.props.is_user ? "Your" : "Bot's";
 		return (
 			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" 
-				style={{height:(this.props.is_stash ? 230 : 540), background: utils.well_bg_color}}>
+				style={{height:(this.props.is_stash ? 265 : 445), background: utils.well_bg_color}}>
 				{(inventory.assets ? inventory.assets.length : 0) || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
 				{inventory_div}
 			</Panel>
