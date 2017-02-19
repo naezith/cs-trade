@@ -445,7 +445,7 @@ class App extends Component {
 				
 				
 		const mid_div = (
-			<Well style={{width:mid_width, background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'auto'}}>
+			<Well style={{width:mid_width, background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'hidden'}}>
 				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={trade_r.status === -1 || !tradable} block>TRADE</Button>
 				
 				<ListGroup style={{margin:'0 0 10px 0'}}>
