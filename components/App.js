@@ -422,7 +422,6 @@ class App extends Component {
 							<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
 						</Form>
 						<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-							
 					</Panel>
 				);
 					  
