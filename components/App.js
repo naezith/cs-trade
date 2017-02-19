@@ -452,7 +452,7 @@ class App extends Component {
 					<ListGroupItem bsStyle={
 							(trade_r.status === -1 ? "warning" :
 							 trade_r.status === 0 ? "success" :
-							 trade_r.status === 1 ? "danger" : "default")}>
+							 trade_r.status === 1 ? "danger" : "info")}>
 						<center>{trade_r.status === -1 ? 'Preparing, please wait...' :
 						trade_r.status === 0 ? (<div>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></div>) : 
 						trade_r.status === 1 ? trade_r.msg : 'Fill stashes to do a trade'}</center>

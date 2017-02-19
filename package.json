@@ -35,7 +35,6 @@
     "react-bootstrap": "^0.30.7",
     "react-contextmenu": "^2.2.1",
     "react-dom": "*",
-    "react-grid-layout": "*",
     "react-parallax": "^1.2.3",
     "react-redux": "*",
     "react-router": "*",
