@@ -43,7 +43,7 @@ class Item extends Component {
 				<ContextMenuTrigger id={this.props.id} >
 					<img width="75" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 					<br/>
-					{item.price_info.valid === true ? ((item.price_info.currency ? item.price_info.currency : '') + item.price_info.lowest_price) : 'Unavailable'}
+					{item.price_info.valid === true ? ('$' + item.price_info.price) : 'Unavailable'}
 				</ContextMenuTrigger>
 				<ContextMenu id={this.props.id}>
 					{item.actions && item.actions.length > 0 && item.actions[0].name.toUpperCase().includes('INSPECT') &&

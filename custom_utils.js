@@ -19,16 +19,16 @@ function backpackUpdated(backpack, sort_dir = -1) {
 	if(isEmpty(backpack) || isEmpty(backpack.assets)) return;
 	
 	backpack.assets.sort(function(a, b){ 
-		var diff = sort_dir*(a.price_info.lowest_price - b.price_info.lowest_price);
+		var diff = sort_dir*(a.price_info.price - b.price_info.price);
 		// Ignore the "No Price" ones at lowest first sort 
-		if(diff !== 0) return (sort_dir === 1 && (a.price_info.lowest_price === 0.0 || b.price_info.lowest_price === 0.0) ? -1 : 1)*diff;
+		if(diff !== 0) return (sort_dir === 1 && (a.price_info.price === 0.0 || b.price_info.price === 0.0) ? -1 : 1)*diff;
 		return getKeyOfItem(a) - getKeyOfItem(b);
 	});
 	
 	// Calculate the worth
 	backpack.worth = 0.0; 
 	for(var i = 0; i < backpack.assets.length; ++i) 
-		backpack.worth += parseFloat(backpack.assets[i].price_info.lowest_price);
+		backpack.worth += parseFloat(backpack.assets[i].price_info.price);
 	backpack.worth = parseFloat(backpack.worth).toFixed(2);
 }
 

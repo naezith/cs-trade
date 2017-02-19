@@ -1,9 +1,11 @@
 ﻿var bot_id = '76561198108613401'; //'76561198304258842';
 var site_tag = 'CS TRADE';
 
-var min_price = 0.2;
-function isValid(price) {
-	return price >= min_price;
+var min_price = 0.3;
+function isValid(is_user, price) {
+	if(is_user) return price >= min_price;
+	
+	return price > 0;
 }
 
 var rates = {

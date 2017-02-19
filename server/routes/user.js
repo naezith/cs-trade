@@ -12,9 +12,8 @@ var database = require('mysql').createConnection({
     database: 'cs_trade'
 });
 
-function getItemObject(price) {
-	var valid = common.isValid(price);
-	return { lowest_price: price, currency: '$', valid }
+function getPriceObject(price) {
+	return { price : price }
 }
 
 function fetchPriceInfo(item) {
@@ -24,7 +23,7 @@ function fetchPriceInfo(item) {
 			
 			// Found info
 			if(results.length > 0){ 
-				resolve( getItemObject(results[0].price) );
+				resolve( getPriceObject(results[0].price) );
 				return;
 			}
 			else {
@@ -32,14 +31,11 @@ function fetchPriceInfo(item) {
 				fetch('http://csgobackpack.net/api/GetItemPrice/?time=1&id=' + encodeURI(item.market_hash_name))
 					.then(function(res) { return res.json(); })
 					.then(function(json) {
-						if(json === null || (json.success && json.success === "false") || parseFloat(json.lowest_price) <= 0.0) {
-							json = {valid: false, lowest_price: 0, currency: '$'};
-						}
-						else json = getItemObject(json.lowest_price);
+						json = getPriceObject(json.lowest_price);
 						
 						// Save to database 
 						database.query('INSERT INTO prices (name, price) VALUES (?, ?) ON DUPLICATE KEY UPDATE price = VALUES(price)', 
-								[item.market_hash_name, json.lowest_price], function(err, results, fields){});
+								[item.market_hash_name, json.price], function(err, results, fields){});
 								
 						resolve(json);
 					})
@@ -132,7 +128,7 @@ router.post('/setTradeURL', function(req, res) {
   
 
 // BOT ON/OFF
-if(1) {
+if(0) {
 
 function validateOffer(user, bot, callback) {
     if(!user.items.length || user.items.length <= 0) return callback("User has no items in offer.");
@@ -146,12 +142,13 @@ function validateOffer(user, bot, callback) {
 		return getInventory(acc.id).then((inventory) => {
 			if(!inventory || !inventory.assets || inventory.assets.length <= 0) return Promise.reject("Couldn't fetch the " + user.alias + "'s inventory.");
 			
+			var is_user = user.alias === 'user';
 			let count = 0;
 			acc.items.map((assetid) => {
 				for(var k in inventory.assets) {
 					var item = inventory.assets[k];
-					if(item.assetid === assetid && common.isValid(item.price_info.lowest_price)) {
-						acc.value += parseFloat(parseFloat(item.price_info.lowest_price * common.getPriceRate(user.displayName, item.market_hash_name, item.type, acc.alias)).toFixed(2));
+					if(item.assetid === assetid && common.isValid(is_user, item.price_info.price)) {
+						acc.value += parseFloat(parseFloat(item.price_info.price * common.getPriceRate(user.displayName, item.market_hash_name, item.type, acc.alias)).toFixed(2));
 						count += 1;
 						break;
 					}

@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import actions from '../redux/actions'
-import SteamLogin from './SteamLogin'
 import Backpack from './Backpack'
 import utils from '../custom_utils'
 import common, { bot_id } from '../common'
@@ -71,12 +70,16 @@ class App extends Component {
 			if(assets) {
 				var max = 0;
 				var rate_type = user_id === bot_id ? 'bot' : 'user';
+				var is_user = user_id === this.props.user_id;
+				
 				for(var i = 0; i < assets.length; ++i){
-					var price = assets[i].price_info.lowest_price;
+					var price = assets[i].price_info.price;
 					
 					// Set rate
-					assets[i].price_info.lowest_price = parseFloat(price * common.getPriceRate(this.props.steam[user_id].displayName, assets[i].market_hash_name, assets[i].type, rate_type)).toFixed(2);
-					if(!common.isValid(assets[i].price_info.lowest_price)) assets[i].price_info.valid = false;
+					assets[i].price_info.price = parseFloat(parseFloat(price * common.getPriceRate(this.props.steam[user_id].displayName, assets[i].market_hash_name, assets[i].type, rate_type)).toFixed(2));
+					
+					// Set Valid
+					assets[i].price_info.valid = common.isValid(is_user, assets[i].price_info.price);
 					
 					if(price > max) max = price;
 					
@@ -229,9 +232,9 @@ class App extends Component {
 		return !st.filter_nametag || (it.fraudwarnings && it.fraudwarnings.length > 0);
 	}
 	filterPrice(st, it){ 
-		return it.price_info.lowest_price > 0.0 && 
-				it.price_info.lowest_price >= st.price_range[0] &&
-				it.price_info.lowest_price <= st.price_range[1];
+		return it.price_info.price > 0.0 && 
+				it.price_info.price >= st.price_range[0] &&
+				it.price_info.price <= st.price_range[1];
 	}
 	filterType(st, it){ 
 		if(st.filter_type === 'All') return true;
@@ -323,36 +326,6 @@ class App extends Component {
 		}
 		
 		// Navbar
-		let navbar_user = undefined;
-		if(steam_user) {
-			navbar_user = (
-				<Nav>
-					<NavItem eventKey={1}>Trade URL</NavItem>
-				  <Navbar.Text pullRight>
-						<NavItem eventKey={2} href="logout">Logout</NavItem>
-				  </Navbar.Text>
-				  <Navbar.Text pullRight>
-						{steam_user.displayName}
-						&nbsp;&nbsp;<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
-				  </Navbar.Text>
-				  
-				</Nav>
-			);
-			navbar_user = (
-				<Nav pullRight>
-					<Navbar.Text>
-						<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
-						&nbsp;&nbsp;{steam_user.displayName}
-					</Navbar.Text>
-					<Navbar.Text pullRight>
-						<NavItem eventKey={5} href="logout">Logout</NavItem>
-					</Navbar.Text>
-				</Nav>
-			);
-		}
-		else {
-			navbar_user = (<SteamLogin actions={this.props.actions}/>);
-		}
 		const navbarInstance = (
 		  <Navbar style={{background: well_bg_color_thick}} collapseOnSelect>
 			<Navbar.Header>
@@ -368,7 +341,22 @@ class App extends Component {
 					<NavItem eventKey={2} onClick={this.setModalState.bind(this, 'giveaway', true)} >Giveaway</NavItem>
 					<NavItem eventKey={3} onClick={this.setModalState.bind(this, 'faq', true)} >FAQ</NavItem>
 				</Nav>
-				{navbar_user}
+				
+				{steam_user ? (
+				<div>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={5} href="logout">Logout</NavItem>
+					</Navbar.Text>
+					<Navbar.Text pullRight>
+						<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
+						&nbsp;&nbsp;{steam_user.displayName}
+					</Navbar.Text>
+				</div>
+				) : (
+					<Navbar.Text pullRight>
+						<Navbar.Link href="/auth/steam"> <Image src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png"/> </Navbar.Link>
+					</Navbar.Text>
+				)}
 			</Navbar.Collapse>
 		  </Navbar>
 		);
