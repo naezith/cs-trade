@@ -31,7 +31,8 @@ class Item extends Component {
 		
 		var is_st = item.type.includes('StatTrak');
 		return (
-			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px', padding:'0'}}>
+			<Button onClick={() => this.props.click(item)} data-tip={tip_html} style={{width:'100px', height:'100px', padding:'0'}}
+				disabled={!item.price_info.valid}>
 				<div style={{background:'#EEEEEE', position:'absolute', marginLeft:'78px', padding:'0', float:'right'}}>
 					{sticker_div}
 				</div>
@@ -42,7 +43,7 @@ class Item extends Component {
 				<ContextMenuTrigger id={this.props.id} >
 					<img width="75" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 					<br/>
-					{item.price_info.valid === true ? ((item.price_info.currency ? item.price_info.currency : '') + item.price_info.lowest_price) : 'No Price'}
+					{item.price_info.valid === true ? ((item.price_info.currency ? item.price_info.currency : '') + item.price_info.lowest_price) : 'Unavailable'}
 				</ContextMenuTrigger>
 				<ContextMenu id={this.props.id}>
 					{item.actions && item.actions.length > 0 && item.actions[0].name.toUpperCase().includes('INSPECT') &&

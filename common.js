@@ -1,6 +1,11 @@
 ﻿var bot_id = '76561198108613401'; //'76561198304258842';
 var site_tag = 'CS TRADE';
 
+var min_price = 0.2;
+function isValid(price) {
+	return price >= min_price;
+}
+
 var rates = {
 	user: {
 		key: 1,
@@ -31,4 +36,4 @@ function getPriceRate(username, market_hash_name, type, rate_type) {
 	+ (rate_type == 'user' && username.indexOf(site_tag) !== -1 ? 0.02 : 0.0); 
 }
 
-module.exports = {bot_id, rates, getPriceRate, site_tag};
+module.exports = {bot_id, rates, getPriceRate, site_tag, isValid};

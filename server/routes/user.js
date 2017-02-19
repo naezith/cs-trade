@@ -13,7 +13,7 @@ var database = require('mysql').createConnection({
 });
 
 function getItemObject(price) {
-	var valid = parseFloat(price) > 0;
+	var valid = common.isValid(price);
 	return { lowest_price: price, currency: '$', valid }
 }
 
@@ -132,7 +132,7 @@ router.post('/setTradeURL', function(req, res) {
   
 
 // BOT ON/OFF
-if(0) {
+if(1) {
 
 function validateOffer(user, bot, callback) {
     if(!user.items.length || user.items.length <= 0) return callback("User has no items in offer.");
@@ -150,7 +150,7 @@ function validateOffer(user, bot, callback) {
 			acc.items.map((assetid) => {
 				for(var k in inventory.assets) {
 					var item = inventory.assets[k];
-					if(item.assetid === assetid) {
+					if(item.assetid === assetid && common.isValid(item.price_info.lowest_price)) {
 						acc.value += parseFloat(parseFloat(item.price_info.lowest_price * common.getPriceRate(user.displayName, item.market_hash_name, item.type, acc.alias)).toFixed(2));
 						count += 1;
 						break;
