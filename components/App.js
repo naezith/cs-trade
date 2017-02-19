@@ -283,8 +283,8 @@ class App extends Component {
 	}
 	
 	render() {
-		var well_bg_color = 'rgba(255, 255, 255, .65)';
-		var well_bg_color_thick = 'rgba(255, 255, 255, .95)';
+		var well_bg_color = utils.well_bg_color;
+		var well_bg_color_thick = utils.well_bg_color_thick;
 		
 		// User div
 		let steam_user = this.props.steam[this.props.user_id];
@@ -309,8 +309,9 @@ class App extends Component {
 			else {
 				utils.backpackUpdated(user.stash);
 				
-				stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} user_id={id} inventory={user.stash}/>);
-				inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} user_id={id} inventory={this.filterItems(id, user.inventory)} />);
+				var is_user = id === this.props.user_id;
+				stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} is_user={is_user} is_stash={true} user_id={id} inventory={user.stash}/>);
+				inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} is_user={is_user} is_stash={false} user_id={id} inventory={this.filterItems(id, user.inventory)} />);
 			}
 		}
 		
@@ -430,20 +431,13 @@ class App extends Component {
 					<Well key={id} className="center-block" style={{width:'100%', maxWidth:('calc((100% - '+ (mid_width+20) +'px)/2'), 
 								background: well_bg_color, padding:'10px 10px 0px 10px', float:(is_bot ? 'right' : 'left'),
 								marginLeft:(is_bot ? '10px' : '0px'), marginRight:(!is_bot ? '10px' : '0px')}}>
-						<Button className="center-block"  bsStyle={!st || st.loadingInventory ? "info" : "primary"} 
+						<Button className="center-block" style={{marginBottom:10}} 
 									onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
 									{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
 						</Button>
 						
-						<Well style={{marginTop:10, padding:'0px 10px 0px 10px', background: well_bg_color}}>
-							<h2>{whos} Stash</h2>
-							{stash_div[idx]}
-						</Well>
-
-						<Well style={{background: well_bg_color, padding:'0px 10px 0px 10px'}}>
-							<h2>{whos} Inventory</h2>
-							{inventory_div[idx]}
-						</Well>
+						{stash_div[idx]}
+						{inventory_div[idx]}
 					</Well>
 				);
 			}

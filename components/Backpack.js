@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import utils from '../custom_utils'
 import Item from './Item'
-
+import { Panel } from 'react-bootstrap';
 var ReactGridLayout = require('react-grid-layout');
 
 class Backpack extends Component {
@@ -48,13 +48,14 @@ class Backpack extends Component {
 			inventory_div = ( <h2>Could not fetch the inventory, maybe your profile is private.</h2> )
 		}
 		
+		var whos = this.props.is_user ? "Your" : "Bot's";
 		return (
-			<div>
+			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" style={{background: utils.well_bg_color}}>
 				{(inventory.assets ? inventory.assets.length : 0) || 0} items worth ${parseFloat(inventory.worth || 0).toFixed(2)}
 				<div style={{height:200, overflowY:'auto'}}>
 					{inventory_div}
 				</div>
-			</div>
+			</Panel>
 		);	
 	}
 }

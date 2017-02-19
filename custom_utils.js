@@ -50,4 +50,7 @@ function replaceAll(str, search, replacement) {
     return str.replace(new RegExp(search, 'g'), replacement);
 };
 
-module.exports = {isEmpty, getKeyOfItem, addItemToBackpack, removeItemFromBackpack, backpackUpdated, getItemWear, getHTMLtags, replaceAll};
+var well_bg_color = 'rgba(255, 255, 255, .65)';
+var well_bg_color_thick = 'rgba(255, 255, 255, .95)';
+module.exports = {isEmpty, getKeyOfItem, addItemToBackpack, removeItemFromBackpack, backpackUpdated, 
+	getItemWear, getHTMLtags, replaceAll, well_bg_color, well_bg_color_thick};
