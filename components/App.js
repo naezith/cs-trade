@@ -542,7 +542,7 @@ class App extends Component {
 		return (
 			<div style={{width:'100%'}}>
 				{navbarInstance} {trade_url_modal}{giveaway_modal}{faq_modal}
-					<Media query="(max-width: 1200px)">
+					<Media query="(max-width: 1199px)">
 					  {matches => matches ? (
 						<Media query="(max-width: 767px)">
 						  {matches => matches ? (
