@@ -299,21 +299,18 @@ class App extends Component {
 			var id = ids[i];
 			var user = this.props.steam[id];
 			
-			stash_div[i] = ( <p>0 items worth $0.00</p> ); 
-			if((i !== 0 && !this.state.user[id]) || (this.state.user[id] && this.state.user[id].loadingInventory && 
-			(!user || !user.inventory || !user.inventory.assets || user.inventory.assets.length <= 0))) {
-				inventory_div[i] = ( <p>Loading the inventory...</p> ); 
+			var is_empty = utils.isEmpty(user);
+			if(is_empty){
+				user = {};
+				user.stash = {assets:[], worth:0, success: 1};
+				user.inventory = {assets:[], worth:0, success: 1};
 			}
-			else if(utils.isEmpty(user)) {
-				inventory_div[i] = i == 0 ? ( <p>Please sign in via Steam.</p> ) : ( <p>Failed to fetch the bot's inventory.</p> ); 
-			}
-			else {
-				utils.backpackUpdated(user.stash);
-				
-				var is_user = id === this.props.user_id;
-				stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} is_user={is_user} is_stash={true} user_id={id} inventory={user.stash}/>);
-				inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} is_user={is_user} is_stash={false} user_id={id} inventory={this.filterItems(id, user.inventory)} />);
-			}
+			utils.backpackUpdated(user.stash);
+			
+			var is_user = i === 0;
+			stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} is_user={is_user} is_stash={true} user_id={id} inventory={user.stash} />);
+			inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} is_user={is_user} is_stash={false} user_id={id} inventory={this.filterItems(id, user.inventory)} 
+									not_logged={is_empty} loading={!this.state.user[id] || this.state.user[id].loadingInventory}/>);
 		}
 		
 		// Price check
@@ -375,72 +372,74 @@ class App extends Component {
 			var whos = is_bot ? "Bot's" : "Your";
 			var idx = is_bot ? 1 : 0;
 			var st = this.state.user[id];
-
-			if(st){
-				filter_div[idx] = (
-					<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{float:!is_bot ? 'left' : 'right', width:mid_width, background: well_bg_color}}>
-						<p>
-							StatTrak™&nbsp;
-							<input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
-							
-							&nbsp;
-							
-							Name Tag&nbsp;
-							<input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
-							
-							&nbsp;
-							
-							Sticker&nbsp;
-							<input type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)}/>
-						</p>
-
-						<p/>
-
-						<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
-
-						
-						<p/>
-							
-						
-						Exterior <div style={{float:'right'}}>Type</div>
-						<p>
-							<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-								{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
-							</FormControl>
-							
-							<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
-								{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
-							</FormControl>
-						</p>
+			var not_logged = false;
+			if(!st) {
+				not_logged = true;
+				st = this.getNewUser();
+			}
+			filter_div[idx] = (
+				<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{float:!is_bot ? 'left' : 'right', width:mid_width, background: well_bg_color}}>
+					<p>
+						StatTrak™&nbsp;
+						<input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
 						
 						&nbsp;
-						<p/>
-
-						<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
-						<p>
-							Highest first:&nbsp;
-							<input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
-							
-						</p>
-						<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
-					</Panel>
-				);
-					  
-				offer_div[idx] = (sc_size) => {
-				return (
-					<Well key={id} style={{width:'100%', maxWidth:(sc_size === 'sm' ? '100%' : 'calc((100% - '+ (sc_size === 'mid' ? 20 : (mid_width+42)) +'px)/2'), 
-								background: well_bg_color, padding:'10px 10px 0px 10px', float:(sc_size === 'mid' ? 'left' : (is_bot ? 'right' : 'left') ),
-								marginLeft:(sc_size !== 'sm' && is_bot ? '10px' : '0'), marginRight:(sc_size !== 'sm' && !is_bot ? '10px' : '0')}}>
-						<Button style={{marginBottom:10}} 
-									onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
-									{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
-						</Button>
 						
-						{stash_div[idx]}
-						{inventory_div[idx]}
-					</Well>
-				)};
-			}
+						Name Tag&nbsp;
+						<input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
+						
+						&nbsp;
+						
+						Sticker&nbsp;
+						<input type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
+					</p>
+
+					<p/>
+
+					<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/></p>
+
+					
+					<p/>
+						
+					
+					Exterior <div style={{float:'right'}}>Type</div>
+					<p>
+						<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}>
+							{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+						</FormControl>
+						
+						<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}>
+							{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+						</FormControl>
+					</p>
+					
+					&nbsp;
+					<p/>
+
+					<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
+					<p>
+						Highest first:&nbsp;
+						<input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
+						
+					</p>
+					<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)}  disabled={not_logged}/>
+				</Panel>
+			);
+				  
+			offer_div[idx] = (sc_size) => {
+			return (
+				<Well key={id} style={{width:'100%', maxWidth:(sc_size === 'sm' ? '100%' : 'calc((100% - '+ (sc_size === 'mid' ? 20 : (mid_width+42)) +'px)/2'), 
+							background: well_bg_color, padding:'10px 10px 0px 10px', float:(sc_size === 'mid' ? 'left' : (is_bot ? 'right' : 'left') ),
+							marginLeft:(sc_size !== 'sm' && is_bot ? '10px' : '0'), marginRight:(sc_size !== 'sm' && !is_bot ? '10px' : '0')}}>
+					<Button style={{marginBottom:10}} 
+								onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
+								{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
+					</Button>
+					
+					{stash_div[idx]}
+					{inventory_div[idx]}
+				</Well>
+			)};
 		});
 				
 				
@@ -511,33 +510,32 @@ class App extends Component {
 			  </Modal.Body>
 			</Modal>
 		);
-		if(steam_user) {
-			trade_url_modal = (
-				<Modal show={this.state.show_modal_trade_url} onHide={this.setModalState.bind(this, 'trade_url', false)}>
-				  <Modal.Header closeButton>
-					<Modal.Title>Trade URL</Modal.Title>
-				  </Modal.Header>
-				  <Modal.Body>
-					<center>
-						{!steam_user && <p>Please sign in with Steam.</p>}
-						<Form inline>
-							<FormControl type="text" value={this.state.trade_url} onChange={this.handleChange.bind(this)} disabled={steam_user || !this.state.editing_url}/>
-							<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)}>
-								{this.state.editing_url ? 'Save' : 'Edit'}
-							</Button>
-						</Form>
-						<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'><h2>FIND YOUR TRADE URL</h2></a>
-					</center>
-					<hr/>
-					<h4>What is it for?</h4>
-					<p>By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without 
-					the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you
-					have inspected and accepted the offer from your Steam page.</p>
-					
-				  </Modal.Body>
-				</Modal>
-			);
-		}
+		
+		trade_url_modal = (
+			<Modal show={this.state.show_modal_trade_url} onHide={this.setModalState.bind(this, 'trade_url', false)}>
+			  <Modal.Header closeButton>
+				<Modal.Title>Trade URL</Modal.Title>
+			  </Modal.Header>
+			  <Modal.Body>
+				<center>
+					{!steam_user && <p>Please sign in through Steam first.</p>}
+					<Form inline>
+						<FormControl type="text" value={this.state.trade_url} onChange={this.handleChange.bind(this)} disabled={!steam_user || !this.state.editing_url}/>
+						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)} disabled={!steam_user}>
+							{this.state.editing_url ? 'Save' : 'Edit'}
+						</Button>
+					</Form>
+					<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'><h2>FIND YOUR TRADE URL</h2></a>
+				</center>
+				<hr/>
+				<h4>What is it for?</h4>
+				<p>By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without 
+				the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you
+				have inspected and accepted the offer from your Steam page.</p>
+				
+			  </Modal.Body>
+			</Modal>
+		);
 		
 		return (
 			<div style={{width:'100%'}}>

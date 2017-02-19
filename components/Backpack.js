@@ -14,7 +14,11 @@ class Backpack extends Component {
 		let inventory_div;
 		let inventory = this.props.inventory;
 		
-		if(!utils.isEmpty(inventory)) {
+		if(!this.props.is_stash && this.props.loading) {
+			if(this.props.not_logged && this.props.is_user) inventory_div = ( <h2>Please sign in through Steam.</h2> );
+			else inventory_div = ( <h2>Loading, please wait...</h2> );
+		}
+		else {
 			if(inventory.success === 1){
 				inventory_div = (
 				  <div style={{height:'100%', minHeight:'100%', overflow:'auto'}} >
@@ -30,8 +34,6 @@ class Backpack extends Component {
 			else {
 				inventory_div = ( <h2>Could not fetch the inventory.</h2> )
 			}
-		} else {
-			inventory_div = ( <h2>Could not fetch the inventory, maybe your profile is private.</h2> )
 		}
 		
 		var whos = this.props.is_user ? "Your" : "Bot's";
