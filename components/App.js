@@ -7,7 +7,7 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
-import { ListGroupItem, ListGroup, Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
+import { Panel, ListGroupItem, ListGroup, Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
@@ -377,20 +377,19 @@ class App extends Component {
 
 			if(st){
 				filter_div[idx] = (
-					<Well style={{background: well_bg_color, padding:'0px 10px 10px 10px'}}>
-						<h3>{whos} Filter</h3>
+					<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{background: well_bg_color}}>
 						<Form inline>
-							StatTrak™:&nbsp;
+							StatTrak™&nbsp;
 							<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
 							
 							&nbsp;
 							
-							Name Tag:&nbsp;
+							Name Tag&nbsp;
 							<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
 							
 							&nbsp;
 							
-							Sticker:&nbsp;
+							Sticker&nbsp;
 							<Checkbox type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)}/>
 						</Form>
 
@@ -424,7 +423,7 @@ class App extends Component {
 						</Form>
 						<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
 							
-					</Well>
+					</Panel>
 				);
 					  
 				offer_div[idx] = (
