@@ -7,7 +7,7 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
-import { Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
+import { ListGroupItem, ListGroup, Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
 var _ = require('lodash');
@@ -454,11 +454,18 @@ class App extends Component {
 				
 		const mid_div = (
 			<Well style={{width:mid_width, background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'auto'}}>
-				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={!tradable} block>TRADE</Button>
-				<p>{trade_r.status === -1 ? (<font color='#008000'>Preparing the offer, please wait...</font>) :
-					trade_r.status === 0 ? (<font color='#008000'>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></font>) : 
-					trade_r.status === 1 ? (<font color='#DC143C'>{trade_r.msg}</font>) :
-					''}</p>
+				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={trade_r.status === -1 || !tradable} block>TRADE</Button>
+				
+				<ListGroup style={{margin:'0 0 10px 0'}}>
+					<ListGroupItem bsStyle={
+							(trade_r.status === -1 ? "warning" :
+							 trade_r.status === 0 ? "success" :
+							 trade_r.status === 1 ? "danger" : "info")}>
+						<center>{trade_r.status === -1 ? 'Preparing, please wait...' :
+						trade_r.status === 0 ? (<div>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></div>) : 
+						trade_r.status === 1 ? trade_r.msg : 'Fill stashes to do a trade'}</center>
+					</ListGroupItem>
+				</ListGroup>
 				{filter_div[1]}
 				{filter_div[0]}
 			</Well>

@@ -263,7 +263,7 @@ router.post('/sendOffer', function(req, res) {
 				offer.addMyItems(makeInventory(myItems));
 				offer.addTheirItems(makeInventory(theirItems));
 				
-				offer.setMessage("Fair trade, sir! - Bot");
+				offer.setMessage("Fair trade, sir! - " + common.site_tag + " Bot");
 				
 				offer.send(function(err, status) {
 					if (err) {
