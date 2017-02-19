@@ -7,6 +7,7 @@ import utils from '../custom_utils'
 import common, { bot_id } from '../common'
 import Range from 'rc-slider/lib/Range'
 import ReactTooltip from 'react-tooltip'
+import Media from 'react-media'
 import { Panel, ListGroupItem, ListGroup, Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
 
@@ -366,7 +367,7 @@ class App extends Component {
 		var trade_r = this.state.trade_result;
 		
 		var filter_div = [undefined, undefined];
-		var offer_div = [undefined, undefined];
+		var offer_div = [() => undefined, () => undefined];
 		
 		var mid_width = 300;
 		ids.map((id) => {
@@ -377,59 +378,60 @@ class App extends Component {
 
 			if(st){
 				filter_div[idx] = (
-					<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{background: well_bg_color}}>
-						<Form inline>
+					<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{float:!is_bot ? 'left' : 'right', width:mid_width, background: well_bg_color}}>
+						<p>
 							StatTrak™&nbsp;
-							<Checkbox type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
+							<input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)}/>
 							
 							&nbsp;
 							
 							Name Tag&nbsp;
-							<Checkbox type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
+							<input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)}/>
 							
 							&nbsp;
 							
 							Sticker&nbsp;
-							<Checkbox type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)}/>
-						</Form>
+							<input type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)}/>
+						</p>
 
 						<p/>
 
 						<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)}/></p>
 
-						<Form inline>
-							Type:&nbsp;
-							<FormControl componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
-								{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
-							</FormControl>
-						</Form>
 						
 						<p/>
 							
-						<Form inline>
-							Exterior:&nbsp;
-							<FormControl componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
+						
+						Exterior <div style={{float:'right'}}>Type</div>
+						<p>
+							<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)}>
+								{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+							</FormControl>
+							
+							<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)}>
 								{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
 							</FormControl>
-						</Form>
-
+						</p>
+						
+						&nbsp;
 						<p/>
 
-						<Form inline>
+						<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
+						<p>
 							Highest first:&nbsp;
-							<Checkbox type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
+							<input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)}/>
 							
-							<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
-						</Form>
+						</p>
 						<Range min={0} max={st.max_price} allowCross={false} value={st.price_range} onChange={this.handleRangeChange.bind(this, id)} />
 					</Panel>
 				);
 					  
-				offer_div[idx] = (
-					<Well key={id} className="center-block" style={{width:'100%', maxWidth:('calc((100% - '+ (mid_width+20) +'px)/2'), 
-								background: well_bg_color, padding:'10px 10px 0px 10px', float:(is_bot ? 'right' : 'left'),
-								marginLeft:(is_bot ? '10px' : '0px'), marginRight:(!is_bot ? '10px' : '0px')}}>
-						<Button className="center-block" style={{marginBottom:10}} 
+				offer_div[idx] = (sc_size) => {
+				return (
+					<Well key={id} style={{width:'100%', maxWidth:(sc_size === 'sm' ? '100%' : 'calc((100% - '+ (sc_size === 'mid' ? 20 : (mid_width+42)) +'px)/2'), 
+								background: well_bg_color, padding:'10px 10px 0px 10px', float:(sc_size === 'mid' ? 'left' : (is_bot ? 'right' : 'left') ),
+								marginLeft:(sc_size !== 'sm' && is_bot ? '10px' : '0'), marginRight:(sc_size !== 'sm' && !is_bot ? '10px' : '0')}}>
+						<Button style={{marginBottom:10}} 
 									onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
 									{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
 						</Button>
@@ -437,15 +439,15 @@ class App extends Component {
 						{stash_div[idx]}
 						{inventory_div[idx]}
 					</Well>
-				);
+				)};
 			}
 		});
 				
 				
 				
 				
-		const mid_div = (
-			<Well style={{width:mid_width, background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'hidden'}}>
+		const mid_div = (draw_filters = true) => (
+			<Well style={{background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'hidden'}}>
 				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={trade_r.status === -1 || !tradable} block>TRADE</Button>
 				
 				<ListGroup style={{margin:'0 0 10px 0'}}>
@@ -455,11 +457,12 @@ class App extends Component {
 							 trade_r.status === 1 ? "danger" : "info")}>
 						<center>{trade_r.status === -1 ? 'Preparing, please wait...' :
 						trade_r.status === 0 ? (<div>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></div>) : 
-						trade_r.status === 1 ? trade_r.msg : 'Fill stashes to do a trade'}</center>
+						trade_r.status === 1 ? trade_r.msg : 'Fill stashes to trade'}</center>
 					</ListGroupItem>
 				</ListGroup>
-				{filter_div[1]}
-				{filter_div[0]}
+				
+				{draw_filters && filter_div[0]}
+				{draw_filters && filter_div[1]}
 			</Well>
 		);
 				
@@ -539,11 +542,35 @@ class App extends Component {
 		return (
 			<div style={{width:'100%'}}>
 				{navbarInstance} {trade_url_modal}{giveaway_modal}{faq_modal}
-				<div style={{margin: '20px', overflow: 'hidden'}}>
-					{offer_div[0]}
-					{offer_div[1]}
-					{mid_div}
-				</div>
+					<Media query="(max-width: 1200px)">
+					  {matches => matches ? (
+						<Media query="(max-width: 767px)">
+						  {matches => matches ? (
+							<div style={{margin: '20px', minWidth:(mid_width + 22)}}>
+								{mid_div(false)}
+								{offer_div[0]('sm')}
+								{offer_div[1]('sm')}
+								{filter_div[0]}
+								{filter_div[1]}
+							</div>
+						  ) : (	
+							<div style={{margin: '20px', overflow: 'hidden'}}>
+								{mid_div(false)}
+								{offer_div[0]('mid')}
+								{offer_div[1]('mid')}
+								{filter_div[0]}
+								{filter_div[1]}
+							</div>
+						  )}
+						</Media>
+					  ) : (
+						<div style={{margin: '20px', overflow: 'hidden'}}>
+							{offer_div[0]('lg')}
+							{offer_div[1]('lg')}
+							{mid_div()}
+						</div>
+					  )}
+					</Media>
 				<ReactTooltip html={true} />
 			</div>
 		);

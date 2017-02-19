@@ -29,6 +29,16 @@ class Item extends Component {
 			sticker_div = (<div className="content" dangerouslySetInnerHTML={{__html: item.stickers_small_html}}></div>);
 		}
 		
+		var item_wear = utils.getItemWear(item.market_hash_name);
+		var item_wear_div = undefined;
+		if(item_wear !== '') {
+			item_wear_div = (
+				<Well style={{background:'#EEEEEE', position:'absolute', padding:'0', float:'right', bottom:0}}>
+					{is_st && <font style={{fontSize:'0.75em'}} color="#998100">ST</font>}{is_st && <br/>}
+					<font style={{fontSize:'0.75em'}} color="#0000DF">{utils.getItemWear(item.market_hash_name)}</font>
+				</Well>
+			);
+		}
 		var is_st = item.type.includes('StatTrak');
 		return (
 			<div style={{float:'left'}}>
@@ -39,10 +49,7 @@ class Item extends Component {
 							<div style={{position:'absolute', marginLeft:'78px', padding:'0', float:'right'}}>
 								{sticker_div}
 							</div>
-							<Well style={{background:'#EEEEEE', position:'absolute', padding:'0', float:'right', bottom:0}}>
-								{is_st && <font style={{fontSize:'0.75em'}} color="#998100">ST</font>}{is_st && <br/>}
-								<font style={{fontSize:'0.75em'}} color="#0000DF">{utils.getItemWear(item.market_hash_name)}</font>
-							</Well>
+							{item_wear_div}
 							
 							<img width="75" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 							<br/>
