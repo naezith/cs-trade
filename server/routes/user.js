@@ -12,7 +12,7 @@ var database = require('mysql').createConnection({
     database: 'cs_trade'
 });
 
-setInterval(fetchFloatedInventory, 10 * 1000);
+setInterval(fetchFloatedInventory, 5 * 60 * 1000);
 
 function getPriceObject(price) {
 	return { price : price }
