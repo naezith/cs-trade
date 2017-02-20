@@ -19,6 +19,9 @@ class Item extends Component {
 		let item = this.props.item;
 		var tip_html = "<center><img width=" + 200 + " src="+'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url + " alt=" + item.market_hash_name + " />";
 		tip_html += "<p><font color=" + item.name_color + ">" + item.market_hash_name + "</font><p>";
+		if(item.float_value) {
+			tip_html += "<p> Float: " + item.float_value + "</p>";
+		}
 		if(item.fraudwarnings && item.fraudwarnings.length > 0) {
 			tip_html += "<p>" + item.fraudwarnings[0] + "</p>";
 		}

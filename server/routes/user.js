@@ -12,7 +12,7 @@ var database = require('mysql').createConnection({
     database: 'cs_trade'
 });
 
-setInterval(fetchFloatedInventory, 5 * 60 * 1000);
+setInterval(fetchFloatedInventory, 1 * 8 * 1000);
 
 function getPriceObject(price) {
 	return { price : price }
@@ -51,14 +51,11 @@ function setPriceInfo(item){
 }
 
 function fetchFloatedInventory(steam_id = common.bot_id) {
-	console.log('Fetching the floated inventory of ' + steam_id);
-	
 	// Get Float Values
 	fetch('http://api.steampowered.com/IEconItems_730/GetPlayerItems/v0001/?key='+priv_info.steam_api_key+'&SteamID='+steam_id)
 	.then(function(res) { return res.json(); })
 	.then(function(data) { 
 		if(data && data.result && data.result.status == 1){
-			console.log('Good float values data, saving...');
 			var arr = [];
 			
 			// Find float values of items
@@ -67,7 +64,7 @@ function fetchFloatedInventory(steam_id = common.bot_id) {
 				for(var i in item.attributes) {
 					var attr = item.attributes[i];
 					if(attr.defindex == 8){
-						arr.push({steam_id, assetid: item.id, value: attr.float_value});
+						arr.push([steam_id, item.id, attr.float_value]);
 						return;
 					}
 				}
@@ -76,12 +73,8 @@ function fetchFloatedInventory(steam_id = common.bot_id) {
 			// Save them
 			if(arr.length > 0) {
 				database.query('INSERT INTO float_values (steam_id, assetid, value) VALUES ? ON DUPLICATE KEY UPDATE value = VALUES(value)', 
-						[arr], function(err, results, fields){ console.log(err); });
+						[arr], function(err, results, fields){ if(err) console.log(err); });
 			}
-			console.log('Saved all float values');
-		}
-		else {
-			console.log('Bad float values data!');
 		}
 	}); 
 }
