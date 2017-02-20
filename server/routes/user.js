@@ -48,6 +48,7 @@ function setPriceInfo(item){
 	return fetchPriceInfo(item).then((price) => Promise.resolve(Object.assign(item, { price_info: price }))); 
 }
 
+
 function fetchFloatValue(steam_id, assetid) {
 	return new Promise(function(resolve, reject) { // AND update_date >= date_sub(NOW(), interval 5 hour)
 		database.query('SELECT value FROM float_values WHERE steam_id = ? AND assetid = ? LIMIT 1', [steam_id, assetid], function(err, results, fields){	
@@ -64,6 +65,9 @@ function setFloatValue(steam_id, item){
 var _ = require('lodash');
 
 function getInventory(steam_id, add_float_val = false) {
+	// Don't fetch float values if it's not the bot
+	if(steam_id !== common.bot_id) add_float_val = false; 
+	
 	return new Promise(function(resolve, reject) {
 		fetch('http://steamcommunity.com/inventory/' + steam_id + '/730/2?l=english&count=5000')
 		.then(function(res) { return res.json(); })
