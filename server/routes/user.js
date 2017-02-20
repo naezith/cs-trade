@@ -12,6 +12,8 @@ var database = require('mysql').createConnection({
     database: 'cs_trade'
 });
 
+setInterval(fetchFloatedInventory, 10 * 1000);
+
 function getPriceObject(price) {
 	return { price : price }
 }
@@ -48,6 +50,41 @@ function setPriceInfo(item){
 	return fetchPriceInfo(item).then((price) => Promise.resolve(Object.assign(item, { price_info: price }))); 
 }
 
+function fetchFloatedInventory(steam_id = common.bot_id) {
+	console.log('Fetching the floated inventory of ' + steam_id);
+	
+	// Get Float Values
+	fetch('http://api.steampowered.com/IEconItems_730/GetPlayerItems/v0001/?key='+priv_info.steam_api_key+'&SteamID='+steam_id)
+	.then(function(res) { return res.json(); })
+	.then(function(data) { 
+		if(data && data.result && data.result.status == 1){
+			console.log('Good float values data, saving...');
+			var arr = [];
+			
+			// Find float values of items
+			data.result.items.map((item) => {
+				// Search for float value of this item
+				for(var i in item.attributes) {
+					var attr = item.attributes[i];
+					if(attr.defindex == 8){
+						arr.push({steam_id, assetid: item.id, value: attr.float_value});
+						return;
+					}
+				}
+			});
+
+			// Save them
+			if(arr.length > 0) {
+				database.query('INSERT INTO float_values (steam_id, assetid, value) VALUES ? ON DUPLICATE KEY UPDATE status = VALUES(status)', 
+						[arr], function(err, results, fields){ console.log(err); });
+			}
+			console.log('Saved all float values');
+		}
+		else {
+			console.log('Bad float values data!');
+		}
+	}); 
+}
 
 function fetchFloatValue(steam_id, assetid) {
 	return new Promise(function(resolve, reject) { // AND update_date >= date_sub(NOW(), interval 5 hour)
