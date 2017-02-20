@@ -44,14 +44,26 @@ function fetchPriceInfo(item) {
 		});
 	});
 }
-
 function setPriceInfo(item){ 
 	return fetchPriceInfo(item).then((price) => Promise.resolve(Object.assign(item, { price_info: price }))); 
+}
+
+function fetchFloatValue(steam_id, assetid) {
+	return new Promise(function(resolve, reject) { // AND update_date >= date_sub(NOW(), interval 5 hour)
+		database.query('SELECT value FROM float_values WHERE steam_id = ? AND assetid = ? LIMIT 1', [steam_id, assetid], function(err, results, fields){	
+			if(err) { console.log(err); return resolve(-1); }
+			return resolve(results.length > 0 ? results[0].value : -1);
+		});
+	});
+}
+
+function setFloatValue(steam_id, item){ 
+	return fetchFloatValue(steam_id, item.assetid).then((f_val) => Promise.resolve(f_val == -1 ? item : Object.assign(item, { float_value: f_val }))); 
 }
  
 var _ = require('lodash');
 
-function getInventory(steam_id) {
+function getInventory(steam_id, add_float_val = false) {
 	return new Promise(function(resolve, reject) {
 		fetch('http://steamcommunity.com/inventory/' + steam_id + '/730/2?l=english&count=5000')
 		.then(function(res) { return res.json(); })
@@ -71,9 +83,18 @@ function getInventory(steam_id) {
 				Promise.all(json.assets.filter((item) => {return item.tradable && item.marketable})
 					// Get Prices
 					.map(setPriceInfo)).then((items) => { 
-						json.assets = items;
 						delete json.total_inventory_count; 
-						return resolve(json); 
+						
+						if(add_float_val){
+							Promise.all(items.map((it) => setFloatValue(steam_id, it))).then((items_floated) => {
+								json.assets = items_floated;
+								return resolve(json); 
+							});
+						}
+						else {
+							json.assets = items;
+							return resolve(json); 
+						}
 					});
 			}
 			else return resolve(json); 
@@ -82,7 +103,7 @@ function getInventory(steam_id) {
 }
 
 router.post('/inventory', function(req, res) {
-	getInventory(req.query.user_id).then(function (json) { return res.json(json); });
+	getInventory(req.query.user_id, true).then(function (json) { return res.json(json); });
 });
   
 function getTradeURL(steam_id) {
