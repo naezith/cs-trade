@@ -75,7 +75,7 @@ function fetchFloatedInventory(steam_id = common.bot_id) {
 
 			// Save them
 			if(arr.length > 0) {
-				database.query('INSERT INTO float_values (steam_id, assetid, value) VALUES ? ON DUPLICATE KEY UPDATE status = VALUES(status)', 
+				database.query('INSERT INTO float_values (steam_id, assetid, value) VALUES ? ON DUPLICATE KEY UPDATE value = VALUES(value)', 
 						[arr], function(err, results, fields){ console.log(err); });
 			}
 			console.log('Saved all float values');
