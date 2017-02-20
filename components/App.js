@@ -154,7 +154,8 @@ class App extends Component {
 					this.setState( { 
 						trade_url : data.trade_url, 
 						last_url : data.trade_url,
-						editing_url : data.trade_url === ''
+						editing_url : data.trade_url === '',
+						show_modal_trade_url : data.trade_url === ''
 					} );
 				}.bind(this));
 			}
