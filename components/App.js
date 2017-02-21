@@ -10,6 +10,7 @@ import ReactTooltip from 'react-tooltip'
 import Media from 'react-media'
 import { Panel, ListGroupItem, ListGroup, Modal, Image, Navbar, Nav, NavItem, NavDropdown, MenuItem,
 	Button, Checkbox, Form, FormGroup, ControlLabel, FormControl, Well, Grid, Row, Col } from 'react-bootstrap';
+import locale from '../locale'
 
 var _ = require('lodash');
 var item_types = ['All', 'Key', 'Knife', 'Rifle', 'Sniper Rifle', 'Pistol', 'SMG', 'Shotgun', 'Machinegun', 'Collectible', 'Sticker', 'Music Kit', 'Tool'];
@@ -27,8 +28,13 @@ class App extends Component {
 			
 			show_modal_trade_url: false,
 			show_modal_giveaway: false,
-			show_modal_faq: false
+			show_modal_faq: false,
+			
+			content: locale.en,
 		};
+	}
+	setLanguage(l) {
+		this.setState({content: locale[l]});
 	}
 	setModalState(name, on) {
 		name = 'show_modal_' + name;
@@ -285,6 +291,7 @@ class App extends Component {
 	}
 	
 	render() {
+		var content = this.state.content;
 		var well_bg_color = utils.well_bg_color;
 		var well_bg_color_thick = utils.well_bg_color_thick;
 		
@@ -337,25 +344,39 @@ class App extends Component {
 			
 			<Navbar.Collapse>
 				<Nav>
-					<NavItem eventKey={1} onClick={this.setModalState.bind(this, 'trade_url', true)} >Trade URL</NavItem>
-					<NavItem eventKey={2} onClick={this.setModalState.bind(this, 'giveaway', true)} >Giveaway</NavItem>
-					<NavItem eventKey={3} onClick={this.setModalState.bind(this, 'faq', true)} >FAQ</NavItem>
+					<NavItem eventKey={1} onClick={this.setModalState.bind(this, 'trade_url', true)} >{content.trade_url}</NavItem>
+					<NavItem eventKey={2} onClick={this.setModalState.bind(this, 'giveaway', true)} >{content.giveaway}</NavItem>
+					<NavItem eventKey={3} onClick={this.setModalState.bind(this, 'faq', true)} >{content.faq}</NavItem>
 				</Nav>
 				
 				{steam_user ? (
 				<div>
 					<Navbar.Text pullRight>
-						<NavItem eventKey={5} href="logout">Logout</NavItem>
+						<NavItem eventKey={5} href="logout">{content.logout}</NavItem>
 					</Navbar.Text>
 					<Navbar.Text pullRight>
 						<Image style={{width:20, borderWidth:2}} src={steam_user.photos[0].value} />
 						&nbsp;&nbsp;{steam_user.displayName}
 					</Navbar.Text>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={6} onClick={this.setLanguage.bind(this, 'en')} >EN</NavItem>
+					</Navbar.Text>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={7} onClick={this.setLanguage.bind(this, 'tr')} >TR</NavItem>
+					</Navbar.Text>
 				</div>
 				) : (
+				<div>
 					<Navbar.Text pullRight>
 						<Navbar.Link href="/auth/steam"> <Image src="http://cdn.steamcommunity.com/public/images/signinthroughsteam/sits_small.png"/> </Navbar.Link>
 					</Navbar.Text>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={6} onClick={this.setLanguage.bind(this, 'en')} >EN</NavItem>
+					</Navbar.Text>
+					<Navbar.Text pullRight>
+						<NavItem eventKey={7} onClick={this.setLanguage.bind(this, 'tr')} >TR</NavItem>
+					</Navbar.Text>
+				</div>
 				)}
 			</Navbar.Collapse>
 		  </Navbar>
@@ -379,31 +400,31 @@ class App extends Component {
 				st = this.getNewUser();
 			}
 			filter_div[idx] = (
-				<Panel header={(<h3>{whos} Filter</h3>)} bsStyle="warning" style={{float:!is_bot ? 'left' : 'right', width:mid_width, background: well_bg_color}}>
+				<Panel header={(<h3>{is_bot ? content.bot_filter_title : content.user_filter_title}</h3>)} bsStyle="warning" style={{float:!is_bot ? 'left' : 'right', width:mid_width, background: well_bg_color}}>
 					<p>
 						StatTrak™&nbsp;
 						<input type="checkbox" checked={st.filter_stattrak} name='stattrak' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
 						
 						&nbsp;
 						
-						Name Tag&nbsp;
+						{content.name_tag}&nbsp;
 						<input type="checkbox" checked={st.filter_nametag} name='nametag' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
 						
 						&nbsp;
 						
-						Sticker&nbsp;
+						{content.sticker}&nbsp;
 						<input type="checkbox" checked={st.filter_sticker} name='sticker' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
 					</p>
 
 					<p/>
 
-					<p><FormControl type="text" placeholder="Enter the item name" value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/></p>
+					<p><FormControl type="text" placeholder={content.search_bar} value={st.filter_name} size="30" name='name' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/></p>
 
 					
 					<p/>
 						
 					
-					Exterior <div style={{float:'right'}}>Type</div>
+					{content.exterior} <div style={{float:'right'}}>{content.type}</div>
 					<p>
 						<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}>
 							{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
@@ -419,7 +440,7 @@ class App extends Component {
 
 					<div style={{float:'right'}}>${st.price_range[0]} - ${st.price_range[1]}</div>
 					<p>
-						Highest first:&nbsp;
+						{content.sort_order}:&nbsp;
 						<input type="checkbox" checked={st.filter_sort_price} name='sort_price' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}/>
 						
 					</p>
@@ -434,7 +455,7 @@ class App extends Component {
 							marginLeft:(sc_size !== 'sm' && is_bot ? '10px' : '0'), marginRight:(sc_size !== 'sm' && !is_bot ? '10px' : '0')}}>
 					<Button style={{marginBottom:10}} 
 								onClick={!st || st.loadingInventory ? null : this.handleRefresh.bind(this, id)} disabled={!st || st.loadingInventory} block>
-								{!st || st.loadingInventory ?  'Refreshing...' : 'Refresh'}
+								{!st || st.loadingInventory ?  content.refreshing : content.refresh}
 					</Button>
 					
 					{stash_div[idx]}
@@ -448,16 +469,16 @@ class App extends Component {
 				
 		const mid_div = (draw_filters = true) => (
 			<Well style={{background: well_bg_color, padding:'10px 10px 0px 10px', overflow: 'hidden'}}>
-				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={trade_r.status === -1 || !tradable} block>TRADE</Button>
+				<Button bsStyle={tradable ? "success" : "danger"} bsSize="large" onClick={this.handleTrade.bind(this)} disabled={trade_r.status === -1 || !tradable} block>{content.trade_button}</Button>
 				
 				<ListGroup style={{margin:'0 0 10px 0'}}>
 					<ListGroupItem bsStyle={
 							(trade_r.status === -1 ? "warning" :
 							 trade_r.status === 0 ? "success" :
 							 trade_r.status === 1 ? "danger" : "info")}>
-						<center>{trade_r.status === -1 ? 'Preparing, please wait...' :
-						trade_r.status === 0 ? (<div>Offer sent, <a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>here is the trade link!</a></div>) : 
-						trade_r.status === 1 ? trade_r.msg : 'Fill stashes to trade'}</center>
+						<center>{trade_r.status === -1 ? content.preparing_offer :
+						trade_r.status === 0 ? (<div>{content.offer_sent_1}<a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>{content.offer_sent_2}</a></div>) : 
+						trade_r.status === 1 ? trade_r.msg : content.default_status}</center>
 					</ListGroupItem>
 				</ListGroup>
 				
@@ -470,42 +491,41 @@ class App extends Component {
 		let giveaway_modal = (
 			<Modal show={this.state.show_modal_giveaway} onHide={this.setModalState.bind(this, 'giveaway', false)}>
 			  <Modal.Header closeButton>
-				<Modal.Title>Giveaway</Modal.Title>
+				<Modal.Title>{content.giveaway}</Modal.Title>
 			  </Modal.Header>
 			  <Modal.Body>
-				<a className="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">{common.site_tag} Test Competition</a>
+				<a className="e-widget" href="https://gleam.io/B5OhY/cs-trade-test-competition" rel="nofollow">{content.giveaway}</a>
 			  </Modal.Body>
 			</Modal>
 		);
 		
 		var rates_div = (
 			<center>
-				<h4>Rates</h4>
-				<p><ControlLabel>Keys:</ControlLabel> {common.rates.user.key*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.key*100}% 
-					&nbsp;&nbsp;&nbsp;<ControlLabel>Knives:</ControlLabel> {common.rates.user.knife*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.knife*100}%
-					&nbsp;&nbsp;&nbsp;<ControlLabel>Rare weapons:</ControlLabel> {common.rates.user.rare_skin*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.rare_skin*100}%</p>
-				<p><ControlLabel>Weapons:</ControlLabel> {common.rates.user.weapon*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.weapon*100}%
-				&nbsp;&nbsp;&nbsp;<ControlLabel>Misc:</ControlLabel> {common.rates.user.misc*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.misc*100}%</p>
+				<h4>{content.rates}</h4>
+				<p><ControlLabel>{content.keys}:</ControlLabel> {common.rates.user.key*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.key*100}% 
+					&nbsp;&nbsp;&nbsp;<ControlLabel>{content.knives}:</ControlLabel> {common.rates.user.knife*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.knife*100}%
+					&nbsp;&nbsp;&nbsp;<ControlLabel>{content.rare_weapons}:</ControlLabel> {common.rates.user.rare_skin*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.rare_skin*100}%</p>
+				<p><ControlLabel>{content.weapons}:</ControlLabel> {common.rates.user.weapon*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.weapon*100}%
+				&nbsp;&nbsp;&nbsp;<ControlLabel>{content.misc}:</ControlLabel> {common.rates.user.misc*100}% <ControlLabel> | </ControlLabel> {common.rates.bot.misc*100}%</p>
 			</center>
 		);
 		
 		let faq_modal = (
 			<Modal show={this.state.show_modal_faq} onHide={this.setModalState.bind(this, 'faq', false)}>
 			  <Modal.Header closeButton>
-				<Modal.Title>Frequently Asked Questions</Modal.Title>
+				<Modal.Title>{content.faq_long}</Modal.Title>
 			  </Modal.Header>
 			  <Modal.Body>
-				<ControlLabel>IS IT POSSIBLE TO LOWER THE WEBSITE COMMISSION?</ControlLabel>
-				<p>OF COURSE, YOU NEED TO ADD <ControlLabel>"{common.site_tag}"</ControlLabel> TO YOUR STEAM PLAYER NICKNAME, AND THEN REPEATEDLY LOG IN TO THE WEBSITE. YOU COMMISSION WILL BE AUTOMATICALLY REDUCED BY 2%.</p>
-				
-				<ControlLabel>WHY I DON'T SEE SOME OF THE CS:GO ITEMS IN MY INVENTORY ON THE WEBSITE?</ControlLabel>
-				<p>YOU NEED TO REFRESH YOUR INVENTORY. IF THE PROBLEM IS NOT SOLVE – PLEASE WAIT A LITTLE. MOST LIKELY, YOU HAVE MADE A PURCHASE ON THE MARKET LESS THAN 7 DAYS AGO. ITEMS APPEAR ONLY AFTER SEVEN DAYS FROM THE PURCHASE.</p>
-				
-				<ControlLabel>WHY ARE SOME ITEMS UNAVAILABLE FOR TRADING?</ControlLabel>
-				<p>WE DO NOT TRADE THESE ITEMS, BECAUSE IF WE PROCESS SUCH TRADES OUR ACCOUNTS WOULD BE FULL OF CHEAP AND LOW-GRADE SKINS, AND WE WILL NO LONGER HAVE UNIQUE ITEMS.</p>
-				
-				<ControlLabel>IS THERE ANY RISK DURING TRADING?</ControlLabel>
-				<p>AS ALL THE BOTS SEND YOU, TRADE OFFERS THROUGH STEAM, YOU ARE ELIGIBLE TO CHECK ALL ITEMS TO BE TRADED ON YOUR OWN RIGHT BEFORE ACCEPTING THE OFFER. NO ONE WILL FORCE YOU TO TRADE ITEMS. IF YOU ARE NOT SATISFIED WITH THE PROPOSED OFFER, YOU CAN FREELY REJECT IT AND SELECT ANY OTHER ONE.</p>
+				{
+					content.faq_questions.map((it) => {
+						return (
+							<div key={it.q}>
+								<ControlLabel>{it.q}</ControlLabel>
+								<p>{it.a}</p>
+							</div>
+						);
+					})
+				}
 				<hr/>
 				{rates_div}
 			  </Modal.Body>
@@ -515,25 +535,24 @@ class App extends Component {
 		trade_url_modal = (
 			<Modal show={this.state.show_modal_trade_url} onHide={this.setModalState.bind(this, 'trade_url', false)}>
 			  <Modal.Header closeButton>
-				<Modal.Title>Trade URL</Modal.Title>
+				<Modal.Title>{content.trade_url}</Modal.Title>
 			  </Modal.Header>
 			  <Modal.Body>
 				<center>
-					{!steam_user && <p>Please sign in through Steam first.</p>}
+					{!steam_user && <p>{content.please_sign_in}</p>}
 					<Form inline>
 						<FormControl type="text" value={this.state.trade_url} onChange={this.handleChange.bind(this)} disabled={!steam_user || !this.state.editing_url}/>
 						<Button  bsStyle={this.state.editing_url ? "primary" : "default"} onClick={this.handleUpdateURL.bind(this)} disabled={!steam_user}>
-							{this.state.editing_url ? 'Save' : 'Edit'}
+							{this.state.editing_url ? content.save : content.edit}
 						</Button>
 					</Form>
-					<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'><h2>FIND YOUR TRADE URL</h2></a>
+					<a target="_blank" href='https://steamcommunity.com/id/me/tradeoffers/privacy'><h2>{content.find_trade_url}</h2></a>
 				</center>
-				<hr/>
-				<h4>What is it for?</h4>
-				<p>By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without 
-				the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you
-				have inspected and accepted the offer from your Steam page.</p>
 				
+				<hr/>
+				
+				<h4>{content.trade_url_info_title}</h4>
+				<p>{content.trade_url_info}</p>
 			  </Modal.Body>
 			</Modal>
 		);

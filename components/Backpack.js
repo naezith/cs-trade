@@ -45,7 +45,7 @@ class Backpack extends Component {
 		return (
 			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" 
 				style={{height:(this.props.is_stash ? 265 : 445), background: utils.well_bg_color, marginBottom:'10px'}}>
-				{(inventory && inventory.assets ? inventory.assets.length : 0) || 0} items worth ${parseFloat(inventory && inventory.worth ? inventory.worth : 0).toFixed(2)}
+				{(inventory && inventory.assets ? inventory.assets.length : 0) || 0} items, ${parseFloat(inventory && inventory.worth ? inventory.worth : 0).toFixed(2)}
 				{inventory_div}
 			</Panel>
 		);	
