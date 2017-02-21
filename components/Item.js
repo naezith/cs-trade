@@ -16,6 +16,7 @@ class Item extends Component {
 	}
 	
 	render() {
+		const content = this.props.content;
 		let item = this.props.item;
 		var tip_html = "<center><img width=" + 200 + " src="+'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url + " alt=" + item.market_hash_name + " />";
 		tip_html += "<p><font color=" + item.name_color + ">" + item.market_hash_name + "</font><p>";
@@ -56,7 +57,7 @@ class Item extends Component {
 							
 							<img width="75" src={'https://steamcommunity-a.akamaihd.net/economy/image/' + item.icon_url} alt={item.market_hash_name} /> 
 							<br/>
-							{item.price_info.valid === true ? ('$' + item.price_info.price) : 'Unavailable'}
+							{item.price_info.valid === true ? ('$' + item.price_info.price) : content.unavailable}
 						</Button>
 					</ContextMenuTrigger>
 				</div>
@@ -64,7 +65,7 @@ class Item extends Component {
 				{item.actions && item.actions.length > 0 && item.actions[0].name.toUpperCase().includes('INSPECT') && (
 				<div style={{position:'absolute', zIndex:10}}>
 					<ContextMenu id={this.props.id}><MenuItem data={{assetid : item.assetid, user_id : this.props.user_id, link : item.actions[0].link}} onClick={this.handleClick}>
-								Inspect
+								{content.inspect}
 							</MenuItem>
 					</ContextMenu>
 				</div>

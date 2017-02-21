@@ -11,17 +11,18 @@ class Backpack extends Component {
 	}
 	
 	render() {
+		const content = this.props.content;
 		let inventory_div;
 		let inventory = this.props.inventory;
 		
 		if(!this.props.is_stash && this.props.loading) {
-			if(this.props.not_logged && this.props.is_user) inventory_div = ( <h2>Please sign in through Steam.</h2> );
-			else inventory_div = ( <h2>Loading, please wait...</h2> );
+			if(this.props.not_logged && this.props.is_user) inventory_div = ( <h2>{content.not_logged_in}</h2> );
+			else inventory_div = ( <h2>{content.loading}</h2> );
 		}
 		else {
 			if(!inventory || !inventory.success){
 				if(this.props.is_stash) inventory_div = undefined;
-				else inventory_div = ( <h2>Loading, please wait...</h2> );
+				else inventory_div = ( <h2>{content.loading}</h2> );
 			}
 			else if(inventory.success === 1){
 				inventory_div = (
@@ -29,7 +30,7 @@ class Backpack extends Component {
 						{
 						  inventory.assets.map((item) => {
 							var id = utils.getKeyOfItem(item);
-							return <Item key={id} id={id} user_id={this.props.user_id} item={item} click={this.props.handleClick} />
+							return <Item content={content.item} key={id} id={id} user_id={this.props.user_id} item={item} click={this.props.handleClick} />
 						  })
 						}
 				  </div>
@@ -37,15 +38,17 @@ class Backpack extends Component {
 			}
 			else {
 				if(this.props.is_stash) inventory_div = undefined;
-				else inventory_div = ( <h2>Could not fetch the inventory.</h2> );
+				else inventory_div = ( <h2>{content.couldnt_fetch}</h2> );
 			}
 		}
 		
-		var whos = this.props.is_user ? "Your" : "Bot's";
+		var tit = this.props.is_user ? 
+					(this.props.is_stash ? content.user.stash : content.user.inventory) : 
+					(this.props.is_stash ? content.bot.stash : content.bot.inventory);
 		return (
-			<Panel header={(<h2>{whos + " " + (this.props.is_stash ? "Stash" : "Inventory")}</h2>)} bsStyle="primary" 
+			<Panel header={(<h2>{tit}</h2>)} bsStyle="primary" 
 				style={{height:(this.props.is_stash ? 265 : 445), background: utils.well_bg_color, marginBottom:'10px'}}>
-				{(inventory && inventory.assets ? inventory.assets.length : 0) || 0} items, ${parseFloat(inventory && inventory.worth ? inventory.worth : 0).toFixed(2)}
+				{(inventory && inventory.assets ? inventory.assets.length : 0) || 0} {content.item_count}, ${parseFloat(inventory && inventory.worth ? inventory.worth : 0).toFixed(2)}
 				{inventory_div}
 			</Panel>
 		);	

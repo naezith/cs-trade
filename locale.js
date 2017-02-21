@@ -21,6 +21,10 @@ module.exports = {
 		preparing_offer: "Preparing, please wait...",
 		offer_sent_1: "Offer sent, ",
 		offer_sent_2: "here is the trade link!",
+		offer_errors: [
+			"Couldn't send the offer, probably someone already took the item.",
+			"Failed, bot is offline."
+		],
 		default_status: "Fill stashes to trade",
 		rates: "Rates",
 		keys: "Keys",
@@ -52,10 +56,6 @@ module.exports = {
 		find_trade_url: "FIND YOUR TRADE URL",
 		trade_url_info_title: "What is it for?",
 		trade_url_info: "By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you have inspected and accepted the offer from your Steam page.",
-		item: {
-			unavailable: "Unavailable",
-			inspect: "Inspect"
-		},
 		backpack : {
 			not_logged_in: "Please sign in through Steam.",
 			loading: "Loading, please wait...",
@@ -68,6 +68,10 @@ module.exports = {
 			bot: {
 				stash: "Bot's Stash",
 				inventory: "Bot's Inventory"
+			},
+			item: {
+				unavailable: "Unavailable",
+				inspect: "Inspect"
 			}
 		}
 	},
@@ -95,6 +99,10 @@ module.exports = {
 		preparing_offer: "Preparing, please wait...",
 		offer_sent_1: "Offer sent, ",
 		offer_sent_2: "here is the trade link!",
+		offer_errors: [
+			"Couldn't send the offer, probably someone already took the item.",
+			"Failed, bot is offline."
+		],
 		default_status: "Fill stashes to trade",
 		rates: "Rates",
 		keys: "Keys",
@@ -126,10 +134,6 @@ module.exports = {
 		find_trade_url: "FIND YOUR TRADE URL",
 		trade_url_info_title: "What is it for?",
 		trade_url_info: "By adding your Steam Trade URL you make it possible for our bots to send you a trade offer without the need of adding you as a friend on Steam. This is totally safe and no items can be traded before you have inspected and accepted the offer from your Steam page.",
-		item: {
-			unavailable: "Unavailable",
-			inspect: "Inspect"
-		},
 		backpack : {
 			not_logged_in: "Please sign in through Steam.",
 			loading: "Loading, please wait...",
@@ -142,7 +146,11 @@ module.exports = {
 			bot: {
 				stash: "Bot's Stash",
 				inventory: "Bot's Inventory"
+			},
+			item: {
+				unavailable: "Unavailable",
+				inspect: "Inspect"
 			}
 		}
-	},
+	}
 };

@@ -199,8 +199,10 @@ class App extends Component {
 		})
 		.then(function(res){ return res.json(); })
 		.then(function(data){ 
-			if(data.msg && data.msg.eresult) data.msg = "Couldn't send the offer, probably someone already took the item."; 
+			if(data.msg && data.msg.eresult) data.msg = 0; 
 			that.setState( { trade_result: data } );
+		}).catch((e) => { 
+			that.setState( { trade_result: {status: 1, msg: 1} } );
 		});
 	}
 
@@ -316,8 +318,8 @@ class App extends Component {
 			utils.backpackUpdated(user.stash);
 			
 			var is_user = i === 0;
-			stash_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 1, id)} is_user={is_user} is_stash={true} user_id={id} inventory={user.stash} />);
-			inventory_div[i] = (<Backpack handleClick={this.handleClick.bind(this, 0, id)} is_user={is_user} is_stash={false} user_id={id} inventory={this.filterItems(id, user.inventory)} 
+			stash_div[i] = (<Backpack content={content.backpack} handleClick={this.handleClick.bind(this, 1, id)} is_user={is_user} is_stash={true} user_id={id} inventory={user.stash} />);
+			inventory_div[i] = (<Backpack content={content.backpack} handleClick={this.handleClick.bind(this, 0, id)} is_user={is_user} is_stash={false} user_id={id} inventory={this.filterItems(id, user.inventory)} 
 									not_logged={is_empty} loading={!this.state.user[id] || this.state.user[id].loadingInventory}/>);
 		}
 		
@@ -427,11 +429,11 @@ class App extends Component {
 					{content.exterior} <div style={{float:'right'}}>{content.type}</div>
 					<p>
 						<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_type} name='type' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}>
-							{item_types.map((type) => { return <option key={type} value={type}>{type}</option> })}
+							{item_types.map((type) => { return <option key={type} value={type}>{content.item_types[item_types.indexOf(type)]}</option> })}
 						</FormControl>
 						
 						<FormControl style={{float:'left', width:'50%'}} componentClass="select" value={st.filter_exterior} name='exterior' onChange={this.handleFilterChange.bind(this, id)} disabled={not_logged}>
-							{item_exteriors.map((type) => { return <option key={type} value={type}>{type}</option> })}
+							{item_exteriors.map((type) => { return <option key={type} value={type}>{content.item_exteriors[item_exteriors.indexOf(type)]}</option> })}
 						</FormControl>
 					</p>
 					
@@ -478,7 +480,7 @@ class App extends Component {
 							 trade_r.status === 1 ? "danger" : "info")}>
 						<center>{trade_r.status === -1 ? content.preparing_offer :
 						trade_r.status === 0 ? (<div>{content.offer_sent_1}<a target="_blank" href={'https://steamcommunity.com/tradeoffer/' + trade_r.offer_id}>{content.offer_sent_2}</a></div>) : 
-						trade_r.status === 1 ? trade_r.msg : content.default_status}</center>
+						trade_r.status === 1 ? content.offer_errors[trade_r.msg] : content.default_status}</center>
 					</ListGroupItem>
 				</ListGroup>
 				
