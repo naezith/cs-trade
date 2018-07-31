@@ -1,4 +1,4 @@
-﻿var bot_id = '76561198108613401'; //'76561198304258842';
+﻿var bot_id = 'xxxxxxxxxxxxxxx'; // Steam ID;
 var site_tag = 'CS TRADE';
 
 var min_price = 0.3;
